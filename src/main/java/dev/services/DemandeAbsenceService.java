@@ -1,6 +1,7 @@
 package dev.services;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -47,6 +48,12 @@ public class DemandeAbsenceService {
 		
 		if(demande.getDateDebut().isBefore(LocalDate.now().plusDays(1))) {
 			throw new DemandeInvalideException("Le délai entre la demande et le début de l'absence doit être d'au moins un jour");
+		}
+		
+		Optional<DemandeAbsence> demandeConcurrente = demandeRepo.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin());
+		
+		if(demandeConcurrente.isPresent()) {
+			throw new DemandeInvalideException("Votre demande chevauche la période d'absence d'un autre collègue");
 		}
 		
 		DemandeAbsence nouvelleDemande = new DemandeAbsence(demande);
