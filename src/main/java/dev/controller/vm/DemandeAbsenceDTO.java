@@ -2,8 +2,8 @@ package dev.controller.vm;
 
 import java.time.LocalDate;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Future;
-import javax.validation.constraints.NotEmpty;
 
 import dev.domain.enums.Type;
 
@@ -18,14 +18,12 @@ public class DemandeAbsenceDTO {
 	/**
 	 * date du début de l'absence
 	 */
-	@NotEmpty(message = "La date de début de l'absence doit être obligatoirement renseignée")
 	@Future(message = "Une demande d'absence ne peut concerner d'une période future")
 	private LocalDate dateDebut;
 
 	/**
 	 * date de la fin de l'absence
 	 */
-	@NotEmpty(message = "La date de fin de l'absence doit être obligatoirement renseignée")
 	@Future(message = "Une demande d'absence ne peut concerner d'une période future")
 	private LocalDate dateFin;
 
@@ -39,6 +37,12 @@ public class DemandeAbsenceDTO {
 	 */
 	private String motif;
 
+	/**
+	 * email du collègue faisant la demande
+	 */
+	@Email
+	private String email;
+	
 	/**
 	 * @return the dateDebut
 	 */
@@ -93,6 +97,20 @@ public class DemandeAbsenceDTO {
 	 */
 	public void setMotif(String motif) {
 		this.motif = motif;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

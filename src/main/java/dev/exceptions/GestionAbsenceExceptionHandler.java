@@ -17,8 +17,14 @@ import org.springframework.web.context.request.WebRequest;
 public class GestionAbsenceExceptionHandler {
 
 	@ExceptionHandler(value = { DemandeInvalideException.class })
-	protected ResponseEntity<Object> handleConflictPasswordInvalid(RuntimeException ex, WebRequest request) {
+	protected ResponseEntity<Object> handleConflictDemandeInvalide(RuntimeException ex, WebRequest request) {
 		String bodyOfResponse = "Demande invalide: " + DemandeInvalideException.message;
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyOfResponse);
+	 }
+	
+	@ExceptionHandler(value = { CollegueNonTrouveException.class })
+	protected ResponseEntity<Object> handleConflictCollegueNonTrouve(RuntimeException ex, WebRequest request) {
+		String bodyOfResponse = "Collegue non trouvé invalide: " + CollegueNonTrouveException.message;
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bodyOfResponse);
 	 }
 	

@@ -1,7 +1,13 @@
 package dev.domain;
 
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Collegue {
@@ -20,6 +26,9 @@ public class Collegue {
 
     @OneToMany(mappedBy = "collegue", cascade = CascadeType.PERSIST)
     private List<RoleCollegue> roles;
+    
+    @OneToMany(mappedBy = "collegueConcerne")
+    private List<DemandeAbsence> demandesAbsence;
 
     public Long getId() {
         return id;

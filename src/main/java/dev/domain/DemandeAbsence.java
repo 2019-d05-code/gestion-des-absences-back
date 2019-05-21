@@ -4,13 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.Future;
-import javax.validation.constraints.NotEmpty;
 
 import dev.controller.vm.DemandeAbsenceDTO;
 import dev.domain.enums.Status;
@@ -33,28 +35,24 @@ public class DemandeAbsence {
 	/**
 	 * Date du début de l'absence
 	 */
-	@NotEmpty(message = "La date de début de l'absence doit être obligatoirement renseignée")
 	@Future(message = "Une demande d'absence ne peut concerner d'une période future")
 	private LocalDate dateDebut;
 	
 	/**
 	 * Date de la fin de l'absence
 	 */
-	@NotEmpty(message = "La date de fin de l'absence doit être obligatoirement renseignée")
 	@Future(message = "Une demande d'absence ne peut concerner d'une période future")
 	private LocalDate dateFin;
 	
 	/**
 	 * Heure de création de la demande
 	 */
-	@NotEmpty(message = "La date de création doit être obligatoirement renseignée")
 	private LocalDateTime heureCreation = LocalDateTime.now();
 	
 	/**
 	 * Type d'absence
 	 */
-	@Enumerated
-	@NotEmpty(message = "Le type de demande d'absence doit être obligatoirement renseigné")
+	@Enumerated(EnumType.STRING)
 	private Type  type;
 	
 	/**
@@ -65,11 +63,14 @@ public class DemandeAbsence {
 	/**
 	 * Status de la demande
 	 */
-	@Enumerated
-	@NotEmpty(message = "Une demande d'absence a obligatoirement un status")
+	@Enumerated(EnumType.STRING)
 	private Status status = Status.INITIALE;
+	
+	@ManyToOne
+	@JoinColumn(name = "collegue_concerne")
+	private Collegue collegueConcerne;
 
-	DemandeAbsence() {
+	public DemandeAbsence() {
 		/**
 		 * Constructeur par défaut
 		 */
@@ -83,8 +84,11 @@ public class DemandeAbsence {
 	public DemandeAbsence(@Valid DemandeAbsenceDTO demande) {
 		this.dateDebut = demande.getDateDebut();
 		this.dateFin = demande.getDateFin();
-		this.motif = demande.getMotif();
 		this.type = demande.getType();
+		
+		if(demande.getMotif() != null && demande.getMotif() != "") {
+			this.motif = demande.getMotif();
+		}
 	}
 	
 	/**
@@ -183,6 +187,20 @@ public class DemandeAbsence {
 	 */
 	public void setHeureCreation(LocalDateTime heureCreation) {
 		this.heureCreation = heureCreation;
+	}
+
+	/**
+	 * @return the collegueConcerne
+	 */
+	public Collegue getCollegueConcerne() {
+		return collegueConcerne;
+	}
+
+	/**
+	 * @param collegueConcerne the collegueConcerne to set
+	 */
+	public void setCollegueConcerne(Collegue collegueConcerne) {
+		this.collegueConcerne = collegueConcerne;
 	}
 	
 }
