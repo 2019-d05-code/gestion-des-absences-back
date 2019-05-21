@@ -1,7 +1,7 @@
 package dev.controller.vm;
 
 import dev.domain.Collegue;
-import dev.domain.Role;
+import dev.domain.enums.Role;
 
 import java.util.ArrayList;
 import java.util.List;

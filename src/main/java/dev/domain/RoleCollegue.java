@@ -2,6 +2,8 @@ package dev.domain;
 
 import javax.persistence.*;
 
+import dev.domain.enums.Role;
+
 @Entity
 public class RoleCollegue {
 
