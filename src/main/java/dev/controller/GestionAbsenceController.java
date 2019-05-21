@@ -13,7 +13,7 @@ import dev.services.DemandeAbsenceService;
 
 @RestController
 @RequestMapping("/gestion-absences")
-public class DemandeAbsenceController {
+public class GestionAbsenceController {
 
 	@Autowired
 	DemandeAbsenceService service;

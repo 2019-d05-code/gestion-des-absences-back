@@ -38,7 +38,7 @@ public class DemandeAbsenceService {
 	public void enregistrerDemandeAbsence(@Valid DemandeAbsenceDTO demande) {
 		
 		if(demande.getType().equals(Type.CONGES_SANS_SOLDE) && demande.getMotif() == null) {
-			throw new DemandeInvalideException("En cas de demande de congès sans solde, un motif doit obligatoirement être fourni");
+			throw new DemandeInvalideException("En cas de demande de congés sans solde, un motif doit obligatoirement être fourni");
 		}
 		
 		if(demande.getDateFin().isBefore(demande.getDateDebut())) {
