@@ -23,6 +23,12 @@ public class GestionAbsenceController {
 	@Autowired
 	DemandeAbsenceService service;
 	
+	/**
+	 * Permet d'appeler le service checkant la validité de la demande et le cas échéant l'enregistrant
+	 * 
+	 * @param demande
+	 * @return
+	 */
 	@PostMapping
 	public ResponseEntity<Object> enregistrerDemandeAbsence(@RequestBody DemandeAbsenceDTO demande) {
 		
@@ -32,6 +38,12 @@ public class GestionAbsenceController {
 		
 	}
 	
+	/**
+	 * Récupère la liste des demandes d'absences validées d'un collègue
+	 * 
+	 * @param email
+	 * @return
+	 */
 	@GetMapping(path= "/listeAbsence")
 	@ResponseBody
 	public List<DemandeAbsenceDTO> afficherAbsencesCollegue(@RequestParam("email") String email) {
