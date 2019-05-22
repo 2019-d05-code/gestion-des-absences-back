@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import dev.controller.vm.DemandeAbsenceDTO;
 import dev.domain.Collegue;
+import dev.domain.DemandeAbsence;
 import dev.domain.enums.Type;
 import dev.exceptions.DemandeInvalideException;
 import dev.repository.CollegueRepo;
+import dev.repository.DemandeAbsenceRepo;
 
 public class DemandeAbsenceServiceTest {
 	
@@ -23,11 +25,15 @@ public class DemandeAbsenceServiceTest {
 	
 	private CollegueRepo crMock;
 	
+	private DemandeAbsenceRepo drMock;
+	
 	@Before
 	public void init() {
 		this.service = new DemandeAbsenceService();
 		this.crMock = Mockito.mock(CollegueRepo.class);
 		this.service.setCollegueRepo(this.crMock);
+		this.drMock = Mockito.mock(DemandeAbsenceRepo.class);
+		this.service.setDemandeRepo(this.drMock);
 	}
 	
 	// Tests relatif à l'ajout d'une nouvelle demande
@@ -90,6 +96,32 @@ public class DemandeAbsenceServiceTest {
 		LOG.info("Alors une exception est renvoyée");
 		
 		service.enregistrerDemandeAbsence(demande);
+	}
+	
+	@Test(expected = DemandeInvalideException.class)
+	public void testSauvegarderDemandeAbsenceAvecPeriodeChevauchantPeriodeAutreCollegue() {
+		
+		LOG.info("Etant donné une première demande valide et une deuxième demande dont les périodes se chevauchent");
+		DemandeAbsence demandeInitiale = new DemandeAbsence();
+		demandeInitiale.setDateDebut(LocalDate.now().plusDays(1));
+		demandeInitiale.setDateFin(LocalDate.now().plusDays(5));
+		demandeInitiale.setType(Type.CONGES_PAYES);
+		
+		DemandeAbsenceDTO demande = new DemandeAbsenceDTO();
+		demande.setEmail("admin@dev.fr");
+		demande.setDateDebut(LocalDate.now().plusDays(2));
+		demande.setDateFin(LocalDate.now().plusDays(10));
+		demande.setType(Type.CONGES_PAYES);
+		
+		Collegue collegue = new Collegue();
+		
+		Mockito.when(crMock.findByEmail(demande.getEmail())).thenReturn(Optional.of(collegue));
+		Mockito.when(drMock.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin())).thenReturn(Optional.of(demandeInitiale));
+		
+		LOG.info("Lorsqu'on tente de sauvegarder cette demande");
+		LOG.info("Alors une exception est renvoyée");
+		service.enregistrerDemandeAbsence(demande);
+		
 	}
 
 	

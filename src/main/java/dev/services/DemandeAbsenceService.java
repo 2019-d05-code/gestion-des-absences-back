@@ -32,10 +32,29 @@ public class DemandeAbsenceService {
 	@Autowired
 	CollegueRepo collegueRepo;
 	
+	/**
+	 * Permet d'utiliser un Mock à la place du vrai repository pour les tests unitaires
+	 * 
+	 * @param repo
+	 */
 	public void setCollegueRepo(CollegueRepo repo) {
 		collegueRepo = repo;
 	}
 	
+	/**
+	 * Permet d'utiliser un Mock à la place du vrai repository pour les tests unitaires
+	 * 
+	 * @param repo
+	 */
+	public void setDemandeRepo(DemandeAbsenceRepo repo) {
+		demandeRepo = repo;
+	}
+	
+	/**
+	 * Sauvegarde une nouvelle demande en attendant quelle soit traitée (traitement de nuit)
+	 * 
+	 * @param demande
+	 */
 	public void enregistrerDemandeAbsence(@Valid DemandeAbsenceDTO demande) {
 		
 		if(demande.getType().equals(Type.CONGES_SANS_SOLDE) && demande.getMotif() == null) {
