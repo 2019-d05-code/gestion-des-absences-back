@@ -24,7 +24,7 @@ public class TraitementNuit {
 	@Autowired
 	CollegueRepo collegueRepo;
 
-	@Scheduled(cron="0 0 * * *")
+	@Scheduled(cron="0 23 * * * *")
 	@Transactional
 	public void traitementNocturne() {
 

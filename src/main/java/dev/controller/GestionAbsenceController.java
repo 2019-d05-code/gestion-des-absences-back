@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controller.vm.DemandeAbsenceDTO;
@@ -45,11 +44,23 @@ public class GestionAbsenceController {
 	 * @return
 	 */
 	@GetMapping(path= "/listeAbsence")
-	@ResponseBody
 	public List<DemandeAbsenceDTO> afficherAbsencesCollegue(@RequestParam("email") String email) {
 
 		return service.listeDemandesValideesParEmail(email);
 
+	}
+	
+	/**
+	 * Enregistre une demande de RTT employeur
+	 * 
+	 * @param demandes
+	 * @return
+	 */
+	@PostMapping("/employeur-rtt")
+	public ResponseEntity<Object> enregistrerDemandeRTTEmployeur(@RequestBody DemandeAbsenceDTO[] demandes) {
+		
+		return ResponseEntity.status(HttpStatus.OK).build();
+		
 	}
 	
 	
