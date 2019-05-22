@@ -1,7 +1,9 @@
 package dev.services;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import dev.controller.vm.DemandeAbsenceDTO;
 import dev.domain.Collegue;
 import dev.domain.DemandeAbsence;
+import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 import dev.exceptions.CollegueNonTrouveException;
 import dev.exceptions.DemandeInvalideException;
@@ -31,6 +34,20 @@ public class DemandeAbsenceService {
 	
 	@Autowired
 	CollegueRepo collegueRepo;
+	
+	public List<DemandeAbsenceDTO> liste() {
+		return demandeRepo.findAll().stream()
+				.map(demande -> new DemandeAbsenceDTO(demande))
+				.collect(Collectors.toList());
+	}
+	
+	public List<DemandeAbsenceDTO> listeDemandesValideesParEmail(String email) {
+		return demandeRepo.findByCollegueConcerneEmail(email).stream()
+				.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
+				.map(demande -> new DemandeAbsenceDTO(demande))
+				.collect(Collectors.toList());
+
+	}
 	
 	/**
 	 * Permet d'utiliser un Mock à la place du vrai repository pour les tests unitaires

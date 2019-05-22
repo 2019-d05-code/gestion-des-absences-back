@@ -1,5 +1,7 @@
 package dev;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +11,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import dev.domain.Collegue;
+import dev.domain.DemandeAbsence;
 import dev.domain.RoleCollegue;
 import dev.domain.Version;
 import dev.domain.enums.Role;
+import dev.domain.enums.Status;
+import dev.domain.enums.Type;
 import dev.repository.CollegueRepo;
+import dev.repository.DemandeAbsenceRepo;
 import dev.repository.VersionRepo;
 
 /**
@@ -26,19 +32,21 @@ public class StartupListener {
     private VersionRepo versionRepo;
     private PasswordEncoder passwordEncoder;
     private CollegueRepo collegueRepo;
+    private DemandeAbsenceRepo demandeRepo;
 
-    public StartupListener(@Value("${app.version}") String appVersion, VersionRepo versionRepo, PasswordEncoder passwordEncoder, CollegueRepo collegueRepo) {
+    public StartupListener(@Value("${app.version}") String appVersion, VersionRepo versionRepo, PasswordEncoder passwordEncoder, CollegueRepo collegueRepo, DemandeAbsenceRepo demandeRepo) {
         this.appVersion = appVersion;
         this.versionRepo = versionRepo;
         this.passwordEncoder = passwordEncoder;
         this.collegueRepo = collegueRepo;
+        this.demandeRepo = demandeRepo;
     }
 
     @EventListener(ContextRefreshedEvent.class)
     public void onStart() {
         this.versionRepo.save(new Version(appVersion));
 
-        // Création de deux utilisateurs
+        // Création de trois utilisateurs
 
         Collegue col1 = new Collegue();
         col1.setNom("Admin");
@@ -63,6 +71,18 @@ public class StartupListener {
         col3.setMotDePasse(passwordEncoder.encode("superpass"));
         col3.setRoles(Arrays.asList(new RoleCollegue(col3, Role.ROLE_UTILISATEUR)));
         this.collegueRepo.save(col3);
+        
+        //Création d'une demande validée pour tester le calendrier
+        
+        DemandeAbsence demTest = new DemandeAbsence();
+        demTest.setDateDebut(LocalDate.of(2019, 5, 24));
+        demTest.setDateFin(LocalDate.of(2019, 5, 28));
+        demTest.setHeureCreation(LocalDateTime.now());
+        demTest.setType(Type.RTT);
+        demTest.setMotif("Julie");
+        demTest.setStatus(Status.VALIDEE);
+        demTest.setCollegueConcerne(col1);
+        this.demandeRepo.save(demTest);
     }
 
 }

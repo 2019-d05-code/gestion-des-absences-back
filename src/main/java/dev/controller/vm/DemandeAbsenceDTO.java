@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Future;
 
+import dev.domain.DemandeAbsence;
 import dev.domain.enums.Type;
 
 /**
@@ -42,16 +43,33 @@ public class DemandeAbsenceDTO {
 	 */
 	@Email
 	private String email;
-	
+
 	/**
 	 * @return the dateDebut
 	 */
+	public DemandeAbsenceDTO() {
+		/**
+		 * Constructeur par défaut
+		 */
+	}
+
+	public DemandeAbsenceDTO(DemandeAbsence dem) {
+		this.dateDebut = dem.getDateDebut();
+		this.dateFin = dem.getDateFin();
+		this.type = dem.getType();
+		if (dem.getMotif() != null) {
+			this.motif = dem.getMotif();
+		}
+		this.email = dem.getCollegueConcerne().getEmail();
+	}
+
 	public LocalDate getDateDebut() {
 		return dateDebut;
 	}
 
 	/**
-	 * @param dateDebut the dateDebut to set
+	 * @param dateDebut
+	 *            the dateDebut to set
 	 */
 	public void setDateDebut(LocalDate dateDebut) {
 		this.dateDebut = dateDebut;
@@ -65,7 +83,8 @@ public class DemandeAbsenceDTO {
 	}
 
 	/**
-	 * @param dateFin the dateFin to set
+	 * @param dateFin
+	 *            the dateFin to set
 	 */
 	public void setDateFin(LocalDate dateFin) {
 		this.dateFin = dateFin;
@@ -79,7 +98,8 @@ public class DemandeAbsenceDTO {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(Type type) {
 		this.type = type;
@@ -93,7 +113,8 @@ public class DemandeAbsenceDTO {
 	}
 
 	/**
-	 * @param motif the motif to set
+	 * @param motif
+	 *            the motif to set
 	 */
 	public void setMotif(String motif) {
 		this.motif = motif;
@@ -107,7 +128,8 @@ public class DemandeAbsenceDTO {
 	}
 
 	/**
-	 * @param email the email to set
+	 * @param email
+	 *            the email to set
 	 */
 	public void setEmail(String email) {
 		this.email = email;
