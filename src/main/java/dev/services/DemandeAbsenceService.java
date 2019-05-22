@@ -1,6 +1,7 @@
 package dev.services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,20 +35,6 @@ public class DemandeAbsenceService {
 	
 	@Autowired
 	CollegueRepo collegueRepo;
-	
-	public List<DemandeAbsenceDTO> liste() {
-		return demandeRepo.findAll().stream()
-				.map(demande -> new DemandeAbsenceDTO(demande))
-				.collect(Collectors.toList());
-	}
-	
-	public List<DemandeAbsenceDTO> listeDemandesValideesParEmail(String email) {
-		return demandeRepo.findByCollegueConcerneEmail(email).stream()
-				.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
-				.map(demande -> new DemandeAbsenceDTO(demande))
-				.collect(Collectors.toList());
-
-	}
 	
 	/**
 	 * Permet d'utiliser un Mock à la place du vrai repository pour les tests unitaires
@@ -100,6 +87,34 @@ public class DemandeAbsenceService {
 		
 		demandeRepo.save(nouvelleDemande);
 		
+	}
+	
+	/**
+	 * Récupère la liste des demandes d'absences etles retourne sous forme de DTO
+	 * 
+	 * @return List<DemandeAbsenceDTO>
+	 */
+	public List<DemandeAbsenceDTO> liste() {
+		return demandeRepo.findAll().stream()
+				.map(demande -> new DemandeAbsenceDTO(demande))
+				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * Récupère la liste des demandes d'absence validées et les retourne sous forme de DTO
+	 * 
+	 * @param email
+	 * @return List<DemandeAbsenceDTO>
+	 */
+	public List<DemandeAbsenceDTO> listeDemandesValideesParEmail(String email) {
+		return demandeRepo.findByCollegueConcerneEmail(email).stream()
+				.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
+				.map(demande -> new DemandeAbsenceDTO(demande))
+				.collect(Collectors.toList());
+	}
+	
+	public List<DemandeAbsence> listeDemandesInitialesTN() {
+		return demandeRepo.findByStatus().orElse(new ArrayList<DemandeAbsence>());
 	}
 	
 }

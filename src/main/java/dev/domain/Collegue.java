@@ -23,6 +23,12 @@ public class Collegue {
     private String email;
 
     private String motDePasse;
+    
+    private Integer soldeRTT = 10;
+    
+    private Integer soldeCongesPayes = 25;
+    
+    private Integer soldeCongesSansSolde = 0;
 
     @OneToMany(mappedBy = "collegue", cascade = CascadeType.PERSIST)
     private List<RoleCollegue> roles;
@@ -77,4 +83,60 @@ public class Collegue {
     public void setPrenom(String prenom) {
         this.prenom = prenom;
     }
+
+	/**
+	 * @return the soldeRTT
+	 */
+	public Integer getSoldeRTT() {
+		return soldeRTT;
+	}
+
+	/**
+	 * @param soldeRTT the soldeRTT to set
+	 */
+	public void setSoldeRTT(Integer soldeRTT) {
+		this.soldeRTT = soldeRTT;
+	}
+
+	/**
+	 * @return the soldeCongesPayes
+	 */
+	public Integer getSoldeCongesPayes() {
+		return soldeCongesPayes;
+	}
+
+	/**
+	 * @param soldeCongesPayes the soldeCongesPayes to set
+	 */
+	public void setSoldeCongesPayes(Integer soldeCongesPayes) {
+		this.soldeCongesPayes = soldeCongesPayes;
+	}
+
+	/**
+	 * @return the soldeCongesSansSolde
+	 */
+	public Integer getSoldeCongesSansSolde() {
+		return soldeCongesSansSolde;
+	}
+
+	/**
+	 * @param soldeCongesSansSolde the soldeCongesSansSolde to set
+	 */
+	public void setSoldeCongesSansSolde(Integer soldeCongesSansSolde) {
+		this.soldeCongesSansSolde = soldeCongesSansSolde;
+	}
+
+	/**
+	 * @return the demandesAbsence
+	 */
+	public List<DemandeAbsence> getDemandesAbsence() {
+		return demandesAbsence;
+	}
+
+	/**
+	 * @param demandesAbsence the demandesAbsence to set
+	 */
+	public void setDemandesAbsence(List<DemandeAbsence> demandesAbsence) {
+		this.demandesAbsence = demandesAbsence;
+	}
 }
