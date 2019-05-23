@@ -94,8 +94,7 @@ public class GestionAbsenceController {
 	@PatchMapping("/modifier/{id}")
 	@Secured("ROLE_UTILISATEUR")
 	public ResponseEntity<Object> modifierDemande(@PathVariable Long id, @RequestBody DemandeAbsenceDTO demande) {
-		System.out.println(demande);
-		System.out.println(demande.getMotif());
+
 		service.modifierDemande(demande, id);
 		
 		return ResponseEntity.status(HttpStatus.OK).build();
