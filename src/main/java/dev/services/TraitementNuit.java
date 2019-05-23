@@ -24,6 +24,13 @@ import dev.domain.DemandeAbsence;
 import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 
+/**
+ * Traitement de nuit: les nouvelles demandes sont soit passées 
+ * au status en attente de validation ou  rejetée de manière automatique
+ * 
+ * @author Nicolas
+ *
+ */
 @Configuration
 @EnableScheduling
 public class TraitementNuit {
