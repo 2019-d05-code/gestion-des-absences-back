@@ -73,7 +73,7 @@ public class StartupListener {
         col3.setSoldeCongesSansSolde(10);
         this.collegueRepo.save(col3);
         
-        //Création de demandes validée pour tester le calendrier
+        //Création de demandes validées pour tester le calendrier
         
         DemandeAbsence demTest = new DemandeAbsence();
         demTest.setDateDebut(LocalDate.of(2019, 5, 24));
