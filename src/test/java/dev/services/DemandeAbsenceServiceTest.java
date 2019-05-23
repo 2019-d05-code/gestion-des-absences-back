@@ -1,6 +1,8 @@
 package dev.services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -115,8 +117,11 @@ public class DemandeAbsenceServiceTest {
 		
 		Collegue collegue = new Collegue();
 		
+		List<DemandeAbsence> list = new ArrayList<>();
+		list.add(demandeInitiale);
+		
 		Mockito.when(crMock.findByEmail(demande.getEmail())).thenReturn(Optional.of(collegue));
-		Mockito.when(drMock.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin())).thenReturn(Optional.of(demandeInitiale));
+		Mockito.when(drMock.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin())).thenReturn(Optional.of(list));
 		
 		LOG.info("Lorsqu'on tente de sauvegarder cette demande");
 		LOG.info("Alors une exception est renvoyée");
