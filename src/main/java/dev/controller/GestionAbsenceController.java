@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ public class GestionAbsenceController {
 	 * @return
 	 */
 	@PostMapping
+	@Secured("ROLE_UTILISATEUR")
 	public ResponseEntity<Object> enregistrerDemandeAbsence(@RequestBody DemandeAbsenceDTO demande) {
 		
 		service.enregistrerDemandeAbsence(demande);
@@ -43,8 +45,9 @@ public class GestionAbsenceController {
 	 * @param email
 	 * @return
 	 */
-	@GetMapping(path= "/listeAbsence")
-	public List<DemandeAbsenceDTO> afficherAbsencesCollegue(@RequestParam("email") String email) {
+	@GetMapping(path= "/listeAbsencesValidees")
+	@Secured("ROLE_UTILISATEUR")
+	public List<DemandeAbsenceDTO> afficherAbsencesValideesCollegue(@RequestParam("email") String email) {
 
 		return service.listeDemandesValideesParEmail(email);
 
@@ -57,6 +60,7 @@ public class GestionAbsenceController {
 	 * @return
 	 */
 	@PostMapping("/employeur-rtt")
+	@Secured("ROLE_MANAGER")
 	public ResponseEntity<Object> enregistrerDemandeRTTEmployeur(@RequestBody DemandeAbsenceDTO[] demandes) {
 		
 		service.enregistrementDemandeRTTEmployeur(demandes);
@@ -64,5 +68,12 @@ public class GestionAbsenceController {
 		
 	}
 	
+	@GetMapping("/listeAbsences")
+	@Secured("ROLE_UTILISATEUR")
+	public ResponseEntity<List<DemandeAbsenceDTO>> recupDemandesParEmploye(@RequestParam("email") String email) {
+		
+		return ResponseEntity.status(HttpStatus.OK).body(service.listeDemandesParEmploye(email));
+		
+	}
 	
 }
