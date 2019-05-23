@@ -59,6 +59,7 @@ public class GestionAbsenceController {
 	@PostMapping("/employeur-rtt")
 	public ResponseEntity<Object> enregistrerDemandeRTTEmployeur(@RequestBody DemandeAbsenceDTO[] demandes) {
 		
+		service.enregistrementDemandeRTTEmployeur(demandes);
 		return ResponseEntity.status(HttpStatus.OK).build();
 		
 	}

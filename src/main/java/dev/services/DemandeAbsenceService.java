@@ -99,10 +99,6 @@ public class DemandeAbsenceService {
 		
 		for(DemandeAbsenceDTO demande: demandes) {
 			
-			if(demande.getType().equals(Type.CONGES_SANS_SOLDE) && demande.getMotif() == null) {
-				throw new DemandeInvalideException("En cas de demande de congés sans solde, un motif doit obligatoirement être fourni");
-			}
-			
 			if(demande.getDateFin().isBefore(demande.getDateDebut())) {
 				throw new DemandeInvalideException("La date de fin de l'absence ne peut pas être antérieure à la date de début");
 			}
@@ -158,6 +154,18 @@ public class DemandeAbsenceService {
 	 */
 	public List<DemandeAbsence> listeDemandesInitialesTN() {
 		return demandeRepo.findByStatus().orElse(new ArrayList<DemandeAbsence>());
+	}
+	
+	/**
+	 * Sauvegarde une demande modifiée par le traitement de nuit
+	 * 
+	 * @param demande
+	 */
+	public void sauvegarderModifDemandesTN(DemandeAbsence demande) {
+		
+		demandeRepo.save(demande);
+		collegueRepo.save(demande.getCollegueConcerne());
+		
 	}
 	
 }
