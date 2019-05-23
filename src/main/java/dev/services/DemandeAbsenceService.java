@@ -124,12 +124,12 @@ public class DemandeAbsenceService {
 	}
 	
 	/**
-	 * Récupère la liste des demandes d'absences etles retourne sous forme de DTO
+	 * Récupère la liste des demandes d'absences et les retourne sous forme de DTO
 	 * 
 	 * @return List<DemandeAbsenceDTO>
 	 */
-	public List<DemandeAbsenceDTO> liste() {
-		return demandeRepo.findAll().stream()
+	public List<DemandeAbsenceDTO> listeDemandesParEmploye(String email) {
+		return demandeRepo.findAllByEmail(email).orElseThrow(() -> new CollegueNonTrouveException("Aucun collègue ayant cet email n'a été trouvé")).stream()
 				.map(demande -> new DemandeAbsenceDTO(demande))
 				.collect(Collectors.toList());
 	}
