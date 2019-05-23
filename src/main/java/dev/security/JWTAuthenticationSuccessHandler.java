@@ -75,13 +75,13 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
         String jws = Jwts.builder()
                 .setSubject(user.getUsername())
                 .addClaims(infosSupplementaireToken)
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN * 2))
                 .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, SECRET)
                 .compact();
 
         Cookie authCookie = new Cookie(TOKEN_COOKIE, (jws));
         authCookie.setHttpOnly(true);
-        authCookie.setMaxAge(EXPIRES_IN);
+        authCookie.setMaxAge(EXPIRES_IN * 2);
         authCookie.setPath("/");
         response.addCookie(authCookie);
         LOG.info("Token JWT généré posé dans un cookie et en entête HTTP");

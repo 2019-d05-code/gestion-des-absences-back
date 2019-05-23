@@ -74,9 +74,9 @@ public class DemandeAbsenceService {
 			throw new DemandeInvalideException("Le délai entre la demande et le début de l'absence doit être d'au moins un jour");
 		}
 		
-		Optional<DemandeAbsence> demandeConcurrente = demandeRepo.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin());
+		Optional<List<DemandeAbsence>> demandeConcurrentes = demandeRepo.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin());
 		
-		if(demandeConcurrente.isPresent()) {
+		if(demandeConcurrentes.isPresent() && demandeConcurrentes.get().size() > 0) {
 			throw new DemandeInvalideException("Votre demande chevauche la période d'absence d'un autre collègue");
 		}
 		

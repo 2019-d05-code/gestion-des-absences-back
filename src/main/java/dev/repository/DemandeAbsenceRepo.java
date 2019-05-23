@@ -15,7 +15,7 @@ import dev.domain.DemandeAbsence;
 public interface DemandeAbsenceRepo extends JpaRepository<DemandeAbsence, Long> {
 
 	@Query("select d from DemandeAbsence d where d.status != 'REJETEE' and (d.dateDebut between :dateDebut and :dateFin) or (d.dateFin between :dateDebut and :dateFin)")
-	public Optional<DemandeAbsence> findConcurrentAbsence(@Param("dateDebut") LocalDate dateDebut, @Param("dateFin") LocalDate dateFin);
+	public Optional<List<DemandeAbsence>> findConcurrentAbsence(@Param("dateDebut") LocalDate dateDebut, @Param("dateFin") LocalDate dateFin);
 	
 	public List<DemandeAbsence> findByCollegueConcerneEmail(String email); 
 	
