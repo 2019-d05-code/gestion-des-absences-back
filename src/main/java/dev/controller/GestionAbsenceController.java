@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controller.vm.DemandeAbsenceDTO;
@@ -23,6 +22,12 @@ public class GestionAbsenceController {
 	@Autowired
 	DemandeAbsenceService service;
 	
+	/**
+	 * Permet d'appeler le service checkant la validité de la demande et le cas échéant l'enregistrant
+	 * 
+	 * @param demande
+	 * @return
+	 */
 	@PostMapping
 	public ResponseEntity<Object> enregistrerDemandeAbsence(@RequestBody DemandeAbsenceDTO demande) {
 		
@@ -32,12 +37,31 @@ public class GestionAbsenceController {
 		
 	}
 	
+	/**
+	 * Récupère la liste des demandes d'absences validées d'un collègue
+	 * 
+	 * @param email
+	 * @return
+	 */
 	@GetMapping(path= "/listeAbsence")
-	@ResponseBody
 	public List<DemandeAbsenceDTO> afficherAbsencesCollegue(@RequestParam("email") String email) {
 
 		return service.listeDemandesValideesParEmail(email);
 
+	}
+	
+	/**
+	 * Enregistre une demande de RTT employeur
+	 * 
+	 * @param demandes
+	 * @return
+	 */
+	@PostMapping("/employeur-rtt")
+	public ResponseEntity<Object> enregistrerDemandeRTTEmployeur(@RequestBody DemandeAbsenceDTO[] demandes) {
+		
+		service.enregistrementDemandeRTTEmployeur(demandes);
+		return ResponseEntity.status(HttpStatus.OK).build();
+		
 	}
 	
 	

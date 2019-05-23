@@ -53,6 +53,11 @@ public class DemandeAbsenceDTO {
 		 */
 	}
 
+	/**
+	 * Constructeur permettant de transformer une demande d'absence en DTO
+	 * 
+	 * @param dem
+	 */
 	public DemandeAbsenceDTO(DemandeAbsence dem) {
 		this.dateDebut = dem.getDateDebut();
 		this.dateFin = dem.getDateFin();
@@ -63,6 +68,9 @@ public class DemandeAbsenceDTO {
 		this.email = dem.getCollegueConcerne().getEmail();
 	}
 
+	/**
+	 * @return LocalDate
+	 */
 	public LocalDate getDateDebut() {
 		return dateDebut;
 	}

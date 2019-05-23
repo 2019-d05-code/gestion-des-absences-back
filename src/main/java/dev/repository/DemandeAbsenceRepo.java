@@ -19,4 +19,7 @@ public interface DemandeAbsenceRepo extends JpaRepository<DemandeAbsence, Long> 
 	
 	public List<DemandeAbsence> findByCollegueConcerneEmail(String email); 
 	
+	@Query("select d from DemandeAbsence d where d.status = 'INITIALE'")
+	public Optional<List<DemandeAbsence>> findByStatus();
+	
 }

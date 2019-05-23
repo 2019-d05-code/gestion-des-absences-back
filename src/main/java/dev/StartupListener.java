@@ -70,9 +70,10 @@ public class StartupListener {
         col3.setEmail("user@dev.fr");
         col3.setMotDePasse(passwordEncoder.encode("superpass"));
         col3.setRoles(Arrays.asList(new RoleCollegue(col3, Role.ROLE_UTILISATEUR)));
+        col3.setSoldeCongesSansSolde(10);
         this.collegueRepo.save(col3);
         
-        //Création d'une demande validée pour tester le calendrier
+        //Création de demandes validée pour tester le calendrier
         
         DemandeAbsence demTest = new DemandeAbsence();
         demTest.setDateDebut(LocalDate.of(2019, 5, 24));
@@ -83,6 +84,48 @@ public class StartupListener {
         demTest.setStatus(Status.VALIDEE);
         demTest.setCollegueConcerne(col1);
         this.demandeRepo.save(demTest);
+        
+        DemandeAbsence demTest2 = new DemandeAbsence();
+        demTest2.setDateDebut(LocalDate.of(2019, 9, 5));
+        demTest2.setDateFin(LocalDate.of(2019, 9, 20));
+        demTest2.setHeureCreation(LocalDateTime.now());
+        demTest2.setType(Type.CONGES_PAYES);
+        demTest2.setMotif("Katrina");
+        demTest2.setStatus(Status.VALIDEE);
+        demTest2.setCollegueConcerne(col1);
+        this.demandeRepo.save(demTest2);
+        
+        // Création de demandes d'absences test pour le traitement de nuit
+        
+        DemandeAbsence demandeEnAttente1 = new DemandeAbsence();
+        demandeEnAttente1.setDateDebut(LocalDate.now().plusMonths(1));
+        demandeEnAttente1.setDateFin(LocalDate.now().plusMonths(1).plusDays(5));
+        demandeEnAttente1.setHeureCreation(LocalDateTime.now());
+        demandeEnAttente1.setType(Type.RTT);
+        demandeEnAttente1.setStatus(Status.INITIALE);
+        demandeEnAttente1.setCollegueConcerne(col1);
+        this.demandeRepo.save(demandeEnAttente1);
+        
+        DemandeAbsence demandeEnAttente2 = new DemandeAbsence();
+        demandeEnAttente2.setDateDebut(LocalDate.now().plusDays(10));
+        demandeEnAttente2.setDateFin(LocalDate.now().plusDays(18));
+        demandeEnAttente2.setHeureCreation(LocalDateTime.now());
+        demandeEnAttente2.setType(Type.CONGES_PAYES);
+        demandeEnAttente2.setMotif("Vacances à la mer");
+        demandeEnAttente2.setStatus(Status.INITIALE);
+        demandeEnAttente2.setCollegueConcerne(col2);
+        this.demandeRepo.save(demandeEnAttente2);
+        
+        DemandeAbsence demandeEnAttente3 = new DemandeAbsence();
+        demandeEnAttente3.setDateDebut(LocalDate.now().plusDays(20));
+        demandeEnAttente3.setDateFin(LocalDate.now().plusDays(25));
+        demandeEnAttente3.setHeureCreation(LocalDateTime.now());
+        demandeEnAttente3.setType(Type.CONGES_SANS_SOLDE);
+        demandeEnAttente3.setMotif("Raisons familiales");
+        demandeEnAttente3.setStatus(Status.INITIALE);
+        demandeEnAttente3.setCollegueConcerne(col3);
+        this.demandeRepo.save(demandeEnAttente3);
+        
     }
 
 }

@@ -1,6 +1,8 @@
 package dev.services;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,20 +36,6 @@ public class DemandeAbsenceService {
 	
 	@Autowired
 	CollegueRepo collegueRepo;
-	
-	public List<DemandeAbsenceDTO> liste() {
-		return demandeRepo.findAll().stream()
-				.map(demande -> new DemandeAbsenceDTO(demande))
-				.collect(Collectors.toList());
-	}
-	
-	public List<DemandeAbsenceDTO> listeDemandesValideesParEmail(String email) {
-		return demandeRepo.findByCollegueConcerneEmail(email).stream()
-				.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
-				.map(demande -> new DemandeAbsenceDTO(demande))
-				.collect(Collectors.toList());
-
-	}
 	
 	/**
 	 * Permet d'utiliser un Mock à la place du vrai repository pour les tests unitaires
@@ -99,6 +87,84 @@ public class DemandeAbsenceService {
 		nouvelleDemande.setCollegueConcerne(collegue);
 		
 		demandeRepo.save(nouvelleDemande);
+		
+	}
+	
+	/**
+	 * Enregistre une demande de RTT pour tous les salariés
+	 * 
+	 * @param demandes
+	 */
+	public void enregistrementDemandeRTTEmployeur(@Valid DemandeAbsenceDTO[] demandes) {
+		
+		for(DemandeAbsenceDTO demande: demandes) {
+			
+			if(demande.getDateFin().isBefore(demande.getDateDebut())) {
+				throw new DemandeInvalideException("La date de fin de l'absence ne peut pas être antérieure à la date de début");
+			}
+			
+			if(demande.getDateDebut().isBefore(LocalDate.now().plusDays(1))) {
+				throw new DemandeInvalideException("Le délai entre la demande et le début de l'absence doit être d'au moins un jour");
+			}
+			
+			Collegue collegue = collegueRepo.findByEmail(demande.getEmail()).orElseThrow(() -> new CollegueNonTrouveException("Aucun collègue ayant cet email n'a été trouvé"));
+
+			if(collegue.getSoldeRTT() < Period.between(demande.getDateDebut(), demande.getDateFin()).getDays()) {
+				throw new DemandeInvalideException("Au mois un employé a épuisé son solde de RTT");
+			}
+			
+			DemandeAbsence nouvelleDemande = new DemandeAbsence(demande);
+			
+			nouvelleDemande.setCollegueConcerne(collegue);
+			
+			demandeRepo.save(nouvelleDemande);
+			
+		}
+		
+	}
+	
+	/**
+	 * Récupère la liste des demandes d'absences etles retourne sous forme de DTO
+	 * 
+	 * @return List<DemandeAbsenceDTO>
+	 */
+	public List<DemandeAbsenceDTO> liste() {
+		return demandeRepo.findAll().stream()
+				.map(demande -> new DemandeAbsenceDTO(demande))
+				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * Récupère la liste des demandes d'absence validées et les retourne sous forme de DTO
+	 * 
+	 * @param email
+	 * @return List<DemandeAbsenceDTO>
+	 */
+	public List<DemandeAbsenceDTO> listeDemandesValideesParEmail(String email) {
+		return demandeRepo.findByCollegueConcerneEmail(email).stream()
+				.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
+				.map(demande -> new DemandeAbsenceDTO(demande))
+				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * Récupère la liste des demandes avec le status INITIALE en vue du traitement de nuit
+	 * 
+	 * @return List<DemandeAbsence>
+	 */
+	public List<DemandeAbsence> listeDemandesInitialesTN() {
+		return demandeRepo.findByStatus().orElse(new ArrayList<DemandeAbsence>());
+	}
+	
+	/**
+	 * Sauvegarde une demande modifiée par le traitement de nuit
+	 * 
+	 * @param demande
+	 */
+	public void sauvegarderModifDemandesTN(DemandeAbsence demande) {
+		
+		demandeRepo.save(demande);
+		collegueRepo.save(demande.getCollegueConcerne());
 		
 	}
 	
