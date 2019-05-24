@@ -57,19 +57,19 @@ public class StartupListener {
         this.collegueRepo.save(col1);
 
         Collegue col2 = new Collegue();
-        col2.setNom("Manager");
+        col2.setNom("User");
         col2.setPrenom("DEV");
-        col2.setEmail("manager@dev.fr");
+        col2.setEmail("user@dev.fr");
         col2.setMotDePasse(passwordEncoder.encode("superpass"));
-        col2.setRoles(Arrays.asList(new RoleCollegue(col2, Role.ROLE_UTILISATEUR), new RoleCollegue(col2, Role.ROLE_MANAGER)));
+        col2.setRoles(Arrays.asList(new RoleCollegue(col2, Role.ROLE_UTILISATEUR)));
         this.collegueRepo.save(col2);
         
         Collegue col3 = new Collegue();
-        col3.setNom("User");
+        col3.setNom("Manager");
         col3.setPrenom("DEV");
-        col3.setEmail("user@dev.fr");
+        col3.setEmail("manager@dev.fr");
         col3.setMotDePasse(passwordEncoder.encode("superpass"));
-        col3.setRoles(Arrays.asList(new RoleCollegue(col3, Role.ROLE_UTILISATEUR)));
+        col3.setRoles(Arrays.asList(new RoleCollegue(col3, Role.ROLE_UTILISATEUR), new RoleCollegue(col2, Role.ROLE_MANAGER)));
         col3.setSoldeCongesSansSolde(10);
         this.collegueRepo.save(col3);
         

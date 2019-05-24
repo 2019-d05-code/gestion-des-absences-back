@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -17,7 +16,7 @@ public class DemoApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedOrigins("*")
-						.allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS")
+						.allowedMethods("GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE")
 						.allowCredentials(true);
 				;
 			}
