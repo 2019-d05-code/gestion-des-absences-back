@@ -32,6 +32,15 @@ public class MissionsController {
 	
 	RestTemplate rt = new RestTemplate();
 	
+	/**
+	 * Permet de récupérer les missions
+	 * 
+	 * @param email
+	 * @param request
+	 * @return
+	 * @throws RestClientException
+	 * @throws URISyntaxException
+	 */
 	@GetMapping("/missions")
 	public ResponseEntity<List<MissionDTO>> recupMissionsDuCollegue(@RequestParam String email, HttpServletRequest request) throws RestClientException, URISyntaxException {
 		
