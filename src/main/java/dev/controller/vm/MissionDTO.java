@@ -2,7 +2,6 @@ package dev.controller.vm;
 
 import java.time.LocalDate;
 
-import dev.domain.Mission;
 import dev.domain.enums.Status;
 
 /**
@@ -33,17 +32,6 @@ public class MissionDTO {
 		/**
 		 * Constructeur par défaut
 		 */
-	}
-
-	public MissionDTO(Mission mission) {
-		this.id = mission.getId();
-		this.dateDebut = mission.getDateDebut();
-		this.dateFin = mission.getDateFin();
-		this.nature = mission.getNature();
-		this.villeDepart = mission.getVilleDepart();
-		this.villeArrivee = mission.getVilleArrivee();
-		this.transport = mission.getTransport();
-		this.statut = mission.getStatut();
 	}
 
 	/**
