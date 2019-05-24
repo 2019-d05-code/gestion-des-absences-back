@@ -51,7 +51,6 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
     @Autowired
     private ObjectMapper mapper;
 
-
     @Override
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
