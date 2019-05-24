@@ -14,8 +14,11 @@ import org.slf4j.LoggerFactory;
 import dev.controller.vm.DemandeAbsenceDTO;
 import dev.domain.Collegue;
 import dev.domain.DemandeAbsence;
+import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 import dev.exceptions.DemandeInvalideException;
+import dev.exceptions.DemandeNonTrouveException;
+import dev.exceptions.ModificationInvalideException;
 import dev.repository.CollegueRepo;
 import dev.repository.DemandeAbsenceRepo;
 
@@ -126,6 +129,55 @@ public class DemandeAbsenceServiceTest {
 		LOG.info("Lorsqu'on tente de sauvegarder cette demande");
 		LOG.info("Alors une exception est renvoyée");
 		service.enregistrerDemandeAbsence(demande);
+		
+	}
+
+	@Test(expected = ModificationInvalideException.class)
+	public void testModifierDemandeAbsenceAvecStatusInvalide() {
+		
+		LOG.info("Etant donné une demande modifiée reçue en vue d'être sauvegardée");
+		
+		DemandeAbsenceDTO demande = new DemandeAbsenceDTO();
+		demande.setEmail("admin@dev.fr");
+		demande.setDateDebut(LocalDate.now().plusDays(2));
+		demande.setDateFin(LocalDate.now().plusDays(10));
+		demande.setType(Type.CONGES_PAYES);
+		demande.setId(3l);
+		demande.setStatus(Status.REJETEE);
+		
+		LOG.info("Etant donné une demande ayant un status invalide");
+		
+		DemandeAbsence dem = new DemandeAbsence(demande);
+		dem.setStatus(Status.REJETEE);
+		
+		Mockito.when(drMock.findById(demande.getId())).thenReturn(Optional.of(dem));
+		
+		LOG.info("Lorsqu'on tente de sauvegarder cette modification");
+		LOG.info("Alors une exception est renvoyée");
+		service.modifierDemande(demande, demande.getId());
+		
+	}
+	
+	@Test(expected = DemandeNonTrouveException.class)
+	public void testModifierDemandeAbsenceAvecIdInvalide() {
+		
+		LOG.info("Etant donné une demande modifiée reçue avec un id inconnu");
+		
+		DemandeAbsenceDTO demande = new DemandeAbsenceDTO();
+		demande.setEmail("admin@dev.fr");
+		demande.setDateDebut(LocalDate.now().plusDays(2));
+		demande.setDateFin(LocalDate.now().plusDays(10));
+		demande.setType(Type.CONGES_PAYES);
+		demande.setId(3l);
+		
+		DemandeAbsence dem = new DemandeAbsence(demande);
+		dem.setStatus(Status.REJETEE);
+		
+		Mockito.when(drMock.findById(3l)).thenThrow(new DemandeNonTrouveException(""));
+		
+		LOG.info("Lorsqu'on tente de sauvegarder cette modification");
+		LOG.info("Alors une exception est renvoyée");
+		service.modifierDemande(demande, demande.getId());
 		
 	}
 

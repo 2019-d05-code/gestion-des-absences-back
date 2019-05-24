@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 import dev.exceptions.CollegueNonTrouveException;
 import dev.exceptions.DemandeInvalideException;
+import dev.exceptions.DemandeNonTrouveException;
+import dev.exceptions.ModificationInvalideException;
 import dev.repository.CollegueRepo;
 import dev.repository.DemandeAbsenceRepo;
 
@@ -145,6 +148,38 @@ public class DemandeAbsenceService {
 				.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
 				.map(demande -> new DemandeAbsenceDTO(demande))
 				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * Modifie la demande d'absence souhaitée à condition qu'elle n'ai pas le status REJETEE ou VALIDEE
+	 * 
+	 * @param demande
+	 * @param id
+	 */
+	@Transactional
+	public void modifierDemande(DemandeAbsenceDTO demande, Long id) {
+		
+		DemandeAbsence demandeAModif = demandeRepo.findById(id).orElseThrow(() -> new DemandeNonTrouveException("Il n'y a aucune demande d'absence ayant cet identifiant"));
+		
+		if(demandeAModif.getStatus().equals(Status.REJETEE) || demandeAModif.getStatus().equals(Status.VALIDEE)) {
+			throw new ModificationInvalideException("Vous ne pouvez pas modifier une demande validée ou rejetée");
+		}
+		
+		demandeAModif.setDateDebut(demande.getDateDebut());
+		demandeAModif.setDateFin(demande.getDateFin());
+		demandeAModif.setMotif(demande.getMotif());
+		demandeAModif.setType(demande.getType());
+		
+		
+	}
+	
+	/**
+	 * Supprime la demande d'absence de la base de données
+	 * 
+	 * @param id
+	 */
+	public void supprimerDemande(Long id) {
+		demandeRepo.deleteById(id);
 	}
 	
 	/**

@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,9 +50,9 @@ public class GestionAbsenceController {
 	 */
 	@GetMapping(path= "/listeAbsencesValidees")
 	@Secured("ROLE_UTILISATEUR")
-	public List<DemandeAbsenceDTO> afficherAbsencesValideesCollegue(@RequestParam("email") String email) {
+	public ResponseEntity<List<DemandeAbsenceDTO>> afficherAbsencesValideesCollegue(@RequestParam("email") String email) {
 
-		return service.listeDemandesValideesParEmail(email);
+		return ResponseEntity.status(HttpStatus.OK).body(service.listeDemandesValideesParEmail(email));
 
 	}
 	
@@ -68,11 +71,48 @@ public class GestionAbsenceController {
 		
 	}
 	
+	/**
+	 * Retourne la liste complète des demandes d'absences effectuées par un collègue
+	 * 
+	 * @param email
+	 * @return List<DemandeAbsenceDTO>
+	 */
 	@GetMapping("/listeAbsences")
 	@Secured("ROLE_UTILISATEUR")
 	public ResponseEntity<List<DemandeAbsenceDTO>> recupDemandesParEmploye(@RequestParam("email") String email) {
 		
 		return ResponseEntity.status(HttpStatus.OK).body(service.listeDemandesParEmploye(email));
+		
+	}
+	
+	/**
+	 * Modifie une demande d'absence
+	 * 
+	 * @param id
+	 * @param demande
+	 */
+	@PatchMapping("/modifier/{id}")
+	@Secured("ROLE_UTILISATEUR")
+	public ResponseEntity<Object> modifierDemande(@PathVariable Long id, @RequestBody DemandeAbsenceDTO demande) {
+
+		service.modifierDemande(demande, id);
+		
+		return ResponseEntity.status(HttpStatus.OK).build();
+		
+	}
+	
+	/**
+	 * Supprime une demande d'absence
+	 * 
+	 * @param id
+	 */
+	@DeleteMapping("/supprimer/{id}")
+	@Secured("ROLE_UTILISATEUR")
+	public ResponseEntity<Object> supprimerDemande(@PathVariable Long id) {
+		
+		service.supprimerDemande(id);
+		
+		return ResponseEntity.status(HttpStatus.OK).build();
 		
 	}
 	

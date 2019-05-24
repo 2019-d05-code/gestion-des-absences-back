@@ -6,6 +6,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Future;
 
 import dev.domain.DemandeAbsence;
+import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 
 /**
@@ -43,6 +44,16 @@ public class DemandeAbsenceDTO {
 	 */
 	@Email
 	private String email;
+	
+	/**
+	 * Identifiant de la demande (générée automatiquement)
+	 */
+	private Long id;
+	
+	/**
+	 * Status actuel de la demande
+	 */
+	private Status status;
 
 	/**
 	 * @return the dateDebut
@@ -66,6 +77,8 @@ public class DemandeAbsenceDTO {
 			this.motif = dem.getMotif();
 		}
 		this.email = dem.getCollegueConcerne().getEmail();
+		this.id = dem.getId();
+		this.status = dem.getStatus();
 	}
 
 	/**
@@ -141,6 +154,34 @@ public class DemandeAbsenceDTO {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public Status getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 }
