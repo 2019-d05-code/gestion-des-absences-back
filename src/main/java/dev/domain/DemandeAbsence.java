@@ -35,13 +35,11 @@ public class DemandeAbsence {
 	/**
 	 * Date du début de l'absence
 	 */
-	@Future(message = "Une demande d'absence ne peut concerner d'une période future")
 	private LocalDate dateDebut;
 	
 	/**
 	 * Date de la fin de l'absence
 	 */
-	@Future(message = "Une demande d'absence ne peut concerner d'une période future")
 	private LocalDate dateFin;
 	
 	/**
