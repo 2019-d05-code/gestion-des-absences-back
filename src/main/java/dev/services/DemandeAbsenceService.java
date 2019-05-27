@@ -169,6 +169,7 @@ public class DemandeAbsenceService {
 		demandeAModif.setDateFin(demande.getDateFin());
 		demandeAModif.setMotif(demande.getMotif());
 		demandeAModif.setType(demande.getType());
+		demandeAModif.setStatus(Status.INITIALE);
 		
 		
 	}
