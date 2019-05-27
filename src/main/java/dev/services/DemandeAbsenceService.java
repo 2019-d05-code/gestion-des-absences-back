@@ -161,8 +161,8 @@ public class DemandeAbsenceService {
 		
 		DemandeAbsence demandeAModif = demandeRepo.findById(id).orElseThrow(() -> new DemandeNonTrouveException("Il n'y a aucune demande d'absence ayant cet identifiant"));
 		
-		if(demandeAModif.getStatus().equals(Status.REJETEE) || demandeAModif.getStatus().equals(Status.VALIDEE)) {
-			throw new ModificationInvalideException("Vous ne pouvez pas modifier une demande validée ou rejetée");
+		if(demandeAModif.getStatus().equals(Status.EN_ATTENTE_VALIDATION) || demandeAModif.getStatus().equals(Status.VALIDEE)) {
+			throw new ModificationInvalideException("Vous ne pouvez pas modifier une demande validée ou en attente de validation");
 		}
 		
 		demandeAModif.setDateDebut(demande.getDateDebut());

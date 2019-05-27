@@ -69,7 +69,7 @@ public class StartupListener {
         col3.setPrenom("DEV");
         col3.setEmail("manager@dev.fr");
         col3.setMotDePasse(passwordEncoder.encode("superpass"));
-        col3.setRoles(Arrays.asList(new RoleCollegue(col3, Role.ROLE_UTILISATEUR), new RoleCollegue(col2, Role.ROLE_MANAGER)));
+        col3.setRoles(Arrays.asList(new RoleCollegue(col3, Role.ROLE_UTILISATEUR), new RoleCollegue(col3, Role.ROLE_MANAGER)));
         col3.setSoldeCongesSansSolde(10);
         this.collegueRepo.save(col3);
         

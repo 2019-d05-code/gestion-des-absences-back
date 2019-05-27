@@ -103,7 +103,7 @@ public class GestionAbsenceController {
 	@Secured("ROLE_UTILISATEUR")
 	public ResponseEntity<List<DemandeAbsenceDTO>> recupDemandesParEmploye(@RequestParam("email") String email, HttpServletRequest request) throws RestClientException, URISyntaxException {
 
-		String get = "https://missions-back.cleverapps.io/collegue/";
+		String get = "https://missions-back.cleverapps.io/collegue/id/";
 
 		// On récupère le collègue connecté afin d'avoir ses identifiants de
 		// connexion
@@ -119,8 +119,10 @@ public class GestionAbsenceController {
 		List<DemandeAbsenceDTO> listeDemandes = service.listeDemandesParEmploye(email);
 		
 		// On transforme la liste des missions récupérées en demandes et on les injecte dans la liste des demandes
-		Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission, email)).collect(Collectors.toList())
-			.forEach(demande -> listeDemandes.add(demande));
+		if(respHttp2.getStatusCodeValue() == 200) {
+			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission, email)).collect(Collectors.toList())
+			.forEach(demande -> listeDemandes.add(demande));			
+		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(listeDemandes);
 
