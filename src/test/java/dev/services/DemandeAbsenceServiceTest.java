@@ -143,12 +143,12 @@ public class DemandeAbsenceServiceTest {
 		demande.setDateFin(LocalDate.now().plusDays(10));
 		demande.setType(Type.CONGES_PAYES);
 		demande.setId(3l);
-		demande.setStatus(Status.REJETEE);
+		demande.setStatus(Status.VALIDEE);
 		
 		LOG.info("Etant donné une demande ayant un status invalide");
 		
 		DemandeAbsence dem = new DemandeAbsence(demande);
-		dem.setStatus(Status.REJETEE);
+		dem.setStatus(Status.VALIDEE);
 		
 		Mockito.when(drMock.findById(demande.getId())).thenReturn(Optional.of(dem));
 		

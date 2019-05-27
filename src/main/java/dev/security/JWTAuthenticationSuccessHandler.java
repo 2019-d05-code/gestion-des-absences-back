@@ -80,7 +80,7 @@ public class JWTAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucc
 
         Cookie authCookie = new Cookie(TOKEN_COOKIE, (jws));
         authCookie.setHttpOnly(true);
-        authCookie.setMaxAge(EXPIRES_IN * 1000);
+        authCookie.setMaxAge(EXPIRES_IN * 1);
         authCookie.setPath("/");
         response.addCookie(authCookie);
         LOG.info("Token JWT généré posé dans un cookie et en entête HTTP");
