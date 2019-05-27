@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -25,6 +26,7 @@ public class Departement {
 	
 	private String nom;
 	
+	@OneToOne
 	private Collegue manager;
 	
 	@OneToMany(mappedBy = "departement")
@@ -39,15 +41,6 @@ public class Departement {
 	public Departement(String nom, Collegue manager) {
 		this.nom = nom;
 		this.manager = manager;
-	}
-	
-	/**
-	 * Permet d'ajouter un collègue à un département
-	 * 
-	 * @param collegue
-	 */
-	public void ajouterCollegue(Collegue collegue) {
-		this.collegues.add(collegue);
 	}
 
 	/**

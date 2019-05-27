@@ -2,7 +2,9 @@ package dev;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -88,16 +90,31 @@ public class StartupListener {
         // Création de départements de test
         
         Departement dep1 = new Departement("Informatique", col3);
-        dep1.ajouterCollegue(col1);
-        dep1.ajouterCollegue(col2);
-        dep1.ajouterCollegue(col3);
+        List<Collegue> liste = new ArrayList<>();
+        liste.add(col1);
+        liste.add(col2);
+        liste.add(col3);
+        dep1.setCollegues(liste);
+        col1.setDepartement(dep1);
+        col2.setDepartement(dep1);
+        col3.setDepartement(dep1);
         
         depRepo.save(dep1);
         
         Departement dep2 = new Departement("Comptabilité", col4);
-        dep2.ajouterCollegue(col4);
+        List<Collegue> liste2 = new ArrayList<>();
+        liste2.add(col4);
+        dep2.setCollegues(liste2);
+        col4.setDepartement(dep2);
         
         depRepo.save(dep2);
+        
+        // Persistence
+        
+        this.collegueRepo.save(col1);
+        this.collegueRepo.save(col2);
+        this.collegueRepo.save(col3);
+        this.collegueRepo.save(col4);
         
         //Création de demandes validées pour tester le calendrier
         
