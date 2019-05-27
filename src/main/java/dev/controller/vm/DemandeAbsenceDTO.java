@@ -48,7 +48,7 @@ public class DemandeAbsenceDTO {
 	/**
 	 * Identifiant de la demande (générée automatiquement)
 	 */
-	private Long id;
+	private long id;
 	
 	/**
 	 * Status actuel de la demande
@@ -79,6 +79,16 @@ public class DemandeAbsenceDTO {
 		this.email = dem.getCollegueConcerne().getEmail();
 		this.id = dem.getId();
 		this.status = dem.getStatus();
+	}
+	
+	public DemandeAbsenceDTO(MissionDTO mission, String email) {
+		this.id = mission.getId();
+		this.dateDebut = mission.getDateDebut();
+		this.dateFin = mission.getDateFin();
+		this.motif = mission.getNature();
+		this.status = mission.getStatut();
+		this.type = Type.MISSION;
+		this.email = email;
 	}
 
 	/**

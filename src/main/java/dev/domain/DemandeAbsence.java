@@ -12,9 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.Valid;
-import javax.validation.constraints.Future;
 
 import dev.controller.vm.DemandeAbsenceDTO;
+import dev.controller.vm.MissionDTO;
 import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 
@@ -87,6 +87,19 @@ public class DemandeAbsence {
 		if(demande.getMotif() != null && demande.getMotif() != "") {
 			this.motif = demande.getMotif();
 		}
+	}
+	
+	/**
+	 * Constructeur permettant de générer une demande d'absence à partir d'une mission
+	 * 
+	 * @param mission
+	 */
+	public DemandeAbsence(MissionDTO mission) {
+		this.id = mission.getId();
+		this.dateDebut = this.getDateDebut();
+		this.dateFin = mission.getDateFin();
+		this.motif = mission.getNature();
+		this.status = mission.getStatut();
 	}
 	
 	/**
