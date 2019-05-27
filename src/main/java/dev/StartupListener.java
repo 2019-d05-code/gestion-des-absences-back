@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import dev.domain.Collegue;
 import dev.domain.DemandeAbsence;
+import dev.domain.Departement;
 import dev.domain.RoleCollegue;
 import dev.domain.Version;
 import dev.domain.enums.Role;
@@ -19,6 +20,7 @@ import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 import dev.repository.CollegueRepo;
 import dev.repository.DemandeAbsenceRepo;
+import dev.repository.DepartementRepo;
 import dev.repository.VersionRepo;
 
 /**
@@ -33,13 +35,15 @@ public class StartupListener {
     private PasswordEncoder passwordEncoder;
     private CollegueRepo collegueRepo;
     private DemandeAbsenceRepo demandeRepo;
+    private DepartementRepo depRepo;
 
-    public StartupListener(@Value("${app.version}") String appVersion, VersionRepo versionRepo, PasswordEncoder passwordEncoder, CollegueRepo collegueRepo, DemandeAbsenceRepo demandeRepo) {
+    public StartupListener(@Value("${app.version}") String appVersion, VersionRepo versionRepo, PasswordEncoder passwordEncoder, CollegueRepo collegueRepo, DemandeAbsenceRepo demandeRepo, DepartementRepo depRepo) {
         this.appVersion = appVersion;
         this.versionRepo = versionRepo;
         this.passwordEncoder = passwordEncoder;
         this.collegueRepo = collegueRepo;
         this.demandeRepo = demandeRepo;
+        this.depRepo = depRepo;
     }
 
     @EventListener(ContextRefreshedEvent.class)
@@ -72,6 +76,28 @@ public class StartupListener {
         col3.setRoles(Arrays.asList(new RoleCollegue(col3, Role.ROLE_UTILISATEUR), new RoleCollegue(col3, Role.ROLE_MANAGER)));
         col3.setSoldeCongesSansSolde(10);
         this.collegueRepo.save(col3);
+        
+        Collegue col4 = new Collegue();
+        col4.setNom("Manager2");
+        col4.setPrenom("DEV");
+        col4.setEmail("manager2@dev.fr");
+        col4.setMotDePasse(passwordEncoder.encode("superpass"));
+        col4.setRoles(Arrays.asList(new RoleCollegue(col4, Role.ROLE_UTILISATEUR), new RoleCollegue(col4, Role.ROLE_MANAGER)));
+        this.collegueRepo.save(col4);
+        
+        // Création de départements de test
+        
+        Departement dep1 = new Departement("Informatique", col3);
+        dep1.ajouterCollegue(col1);
+        dep1.ajouterCollegue(col2);
+        dep1.ajouterCollegue(col3);
+        
+        depRepo.save(dep1);
+        
+        Departement dep2 = new Departement("Comptabilité", col4);
+        dep2.ajouterCollegue(col4);
+        
+        depRepo.save(dep2);
         
         //Création de demandes validées pour tester le calendrier
         

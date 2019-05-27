@@ -171,7 +171,7 @@ public class DemandeAbsenceServiceTest {
 		demande.setId(3l);
 		
 		DemandeAbsence dem = new DemandeAbsence(demande);
-		dem.setStatus(Status.REJETEE);
+		dem.setStatus(Status.VALIDEE);
 		
 		Mockito.when(drMock.findById(3l)).thenThrow(new DemandeNonTrouveException(""));
 		

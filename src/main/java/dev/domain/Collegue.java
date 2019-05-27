@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -29,6 +31,10 @@ public class Collegue {
     private Integer soldeCongesPayes = 25;
     
     private Integer soldeCongesSansSolde = 0;
+    
+    @ManyToOne
+    @JoinColumn(name = "departement_id")
+    private Departement departement;
 
     @OneToMany(mappedBy = "collegue", cascade = CascadeType.PERSIST)
     private List<RoleCollegue> roles;
@@ -138,5 +144,19 @@ public class Collegue {
 	 */
 	public void setDemandesAbsence(List<DemandeAbsence> demandesAbsence) {
 		this.demandesAbsence = demandesAbsence;
+	}
+
+	/**
+	 * @return the departement
+	 */
+	public Departement getDepartement() {
+		return departement;
+	}
+
+	/**
+	 * @param departement the departement to set
+	 */
+	public void setDepartement(Departement departement) {
+		this.departement = departement;
 	}
 }
