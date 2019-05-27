@@ -28,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import dev.controller.vm.DemandeAbsenceDTO;
 import dev.controller.vm.MissionDTO;
 import dev.domain.Collegue;
+import dev.domain.enums.Role;
 import dev.repository.CollegueRepo;
 import dev.services.DemandeAbsenceService;
 
@@ -109,19 +110,22 @@ public class GestionAbsenceController {
 		// connexion
 		Collegue collegueConnecte = colRepo.findByEmail(email)
 				.orElseThrow(() -> new IllegalArgumentException("L'email ne correspond à aucun collegue"));
-
-		// On récupère le cookie et one le transfère dans la requête vers l'API
-		// gestion des missions
-		ResponseEntity<MissionDTO[]> respHttp2 = rt.exchange(RequestEntity.get(new URI(get + collegueConnecte.getId()))
-				.header("Cookie", request.getHeader("Cookie")).build(), MissionDTO[].class);
 		
 		// On récupère la liste des demandes
 		List<DemandeAbsenceDTO> listeDemandes = service.listeDemandesParEmploye(email);
-		
-		// On transforme la liste des missions récupérées en demandes et on les injecte dans la liste des demandes
-		if(respHttp2.getStatusCodeValue() == 200) {
-			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission, email)).collect(Collectors.toList())
-			.forEach(demande -> listeDemandes.add(demande));			
+
+		if(! collegueConnecte.getRoles().contains(Role.ROLE_MANAGER)){
+			
+			// On récupère le cookie et one le transfère dans la requête vers l'API
+			// gestion des missions
+			ResponseEntity<MissionDTO[]> respHttp2 = rt.exchange(RequestEntity.get(new URI(get + collegueConnecte.getId()))
+					.header("Cookie", request.getHeader("Cookie")).build(), MissionDTO[].class);
+			
+			// On transforme la liste des missions récupérées en demandes et on les injecte dans la liste des demandes
+			if(respHttp2.getStatusCodeValue() == 200) {
+				Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission, email)).collect(Collectors.toList())
+				.forEach(demande -> listeDemandes.add(demande));			
+			}
 		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(listeDemandes);

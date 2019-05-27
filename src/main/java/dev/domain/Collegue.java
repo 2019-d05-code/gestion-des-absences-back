@@ -28,7 +28,7 @@ public class Collegue {
     
     private Integer soldeRTT = 10;
     
-    private Integer soldeCongesPayes = 25;
+    private Integer soldeCongesPayes = 35;
     
     private Integer soldeCongesSansSolde = 0;
     
