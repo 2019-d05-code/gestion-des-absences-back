@@ -32,7 +32,7 @@ public interface DemandeAbsenceRepo extends JpaRepository<DemandeAbsence, Long> 
 	public Optional<List<DemandeAbsence>> findAllByEmail(@Param("email") String email);
 	
 	@Query("select d from DemandeAbsence d where d.status = 'EN_ATTENTE_VALIDATION' and d.collegueConcerne.departement.manager.email = :email")
-	public Optional<List<DemandeAbsence>> findAllWithStatusENAttenteValidation(@Param("email") String email);
+	public List<DemandeAbsence> findAllWithStatusENAttenteValidation(@Param("email") String email);
 	
 	@Query("select d from DemandeAbsence d where d.dateDebut between :dateDebut and :dateFin")
 	public Optional<List<DemandeAbsence>> findAbsencesParMois(@Param("dateDebut") LocalDate dateDebut, @Param("dateFin") LocalDate dateFin);

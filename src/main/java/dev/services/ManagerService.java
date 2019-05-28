@@ -12,7 +12,6 @@ import dev.controller.vm.DemandeAbsenceValidationDTO;
 import dev.domain.DemandeAbsence;
 import dev.domain.enums.Status;
 import dev.domain.enums.Type;
-import dev.exceptions.CollegueNonTrouveException;
 import dev.exceptions.DemandeNonTrouveException;
 import dev.repository.CollegueRepo;
 import dev.repository.DemandeAbsenceRepo;
@@ -35,8 +34,9 @@ public class ManagerService {
 	public List<DemandeAbsenceValidationDTO> recupDemandesEnAttenteValidation(String email) {
 
 		return demRepo.findAllWithStatusENAttenteValidation(email)
-				.orElseThrow(() -> new CollegueNonTrouveException("Aucun manager correspondant à cet email")).stream()
-				.map(demande -> new DemandeAbsenceValidationDTO(demande)).collect(Collectors.toList());
+				.stream()
+				.map(demande -> new DemandeAbsenceValidationDTO(demande))
+				.collect(Collectors.toList());
 
 	}
 
