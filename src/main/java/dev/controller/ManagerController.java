@@ -34,7 +34,7 @@ public class ManagerController {
 	 * 
 	 * @return List<DemandeAbsenceValidationDTO>
 	 */
-	@GetMapping("listeAbsencesAttenteValidation")
+	@GetMapping("/listeAbsencesAttenteValidation")
 	@Secured("ROLE_MANAGER")
 	public ResponseEntity<List<DemandeAbsenceValidationDTO>> recupDemandesEnAttenteValidation(@RequestParam String email) {
 		
