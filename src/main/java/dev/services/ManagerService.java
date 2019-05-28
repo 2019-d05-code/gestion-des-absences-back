@@ -1,6 +1,5 @@
 package dev.services;
 
-import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,20 +67,20 @@ public class ManagerService {
 
 		demande.setStatus(Status.REJETEE);
 
+		int decompte = TraitementNuit.recupCompteWeekends(demande.getDateDebut(), demande.getDateFin());
+
 		if (demande.getType().equals(Type.CONGES_PAYES)) {
-			demande.getCollegueConcerne().setSoldeCongesPayes(demande.getCollegueConcerne().getSoldeCongesPayes()
-					+ Period.between(demande.getDateDebut(), demande.getDateFin()).getDays());
+			demande.getCollegueConcerne()
+					.setSoldeCongesPayes(demande.getCollegueConcerne().getSoldeCongesPayes() + decompte);
 		}
 
 		if (demande.getType().equals(Type.RTT)) {
-			demande.getCollegueConcerne().setSoldeRTT(demande.getCollegueConcerne().getSoldeRTT()
-					+ Period.between(demande.getDateDebut(), demande.getDateFin()).getDays());
+			demande.getCollegueConcerne().setSoldeRTT(demande.getCollegueConcerne().getSoldeRTT() + decompte);
 		}
 
 		if (demande.getType().equals(Type.CONGES_SANS_SOLDE)) {
 			demande.getCollegueConcerne()
-					.setSoldeCongesSansSolde(demande.getCollegueConcerne().getSoldeCongesSansSolde()
-							+ Period.between(demande.getDateDebut(), demande.getDateFin()).getDays());
+					.setSoldeCongesSansSolde(demande.getCollegueConcerne().getSoldeCongesSansSolde() + decompte);
 		}
 	}
 
@@ -91,85 +90,92 @@ public class ManagerService {
 	 * 
 	 * @return List<DemandeAbsenceDTO>
 	 */
-//	public List<Absence> demandesParMoisParCollegue(int mois, int annee) {
-//
-//		LocalDate moisDateDebut = LocalDate.of(annee, mois, 1);
-//		LocalDate moisDateFin = LocalDate.of(annee, mois, 28);
-//
-//		// détermine combien de jours dans le mois
-//		int moisPairs[] = { 4, 6, 9, 11 };
-//
-//		if (Year.isLeap(annee)) {
-//			int moisImpairsBiss[] = { 1, 3, 5, 7, 8, 10, 12 };
-//			for (int mP : moisPairs) {
-//				if (mois != mP) {
-//					for (int mI : moisImpairsBiss) {
-//						if (mois != mI) {
-//							moisDateFin = LocalDate.of(annee, mois, 29);
-//						} else {
-//							moisDateFin = LocalDate.of(annee, mois, 31);
-//						}
-//					}
-//				} else {
-//					moisDateFin = LocalDate.of(annee, mois, 30);
-//				}
-//			}
-//
-//		} else {
-//			int moisImpairs[] = { 1, 3, 5, 7, 8, 10, 12 };
-//			for (int mP : moisPairs) {
-//				if (mois != mP) {
-//					for (int mI : moisImpairs) {
-//						if (mois != mI) {
-//							moisDateFin = LocalDate.of(annee, mois, 28);
-//						} else {
-//							moisDateFin = LocalDate.of(annee, mois, 31);
-//						}
-//					}
-//				} else {
-//					moisDateFin = LocalDate.of(annee, mois, 30);
-//				}
-//			}
-//
-//		}
-//
-//		// penser à aussi trier par département
-//		List<DemandeAbsenceDTO> listeDemandes = demRepo.findAbsencesParMois(moisDateDebut, moisDateFin)
-//				.orElseThrow(() -> new DemandeNonTrouveException("Aucune demande trouvée pour cette période")).stream()
-//				.map(demande -> new DemandeAbsenceDTO(demande)).collect(Collectors.toList());
-//
-//		// Pour chaque liste de demande de collègue, il faut extraire le jour de
-//		// chaque RTT, CP et CSS
-//		List<Integer> joursRTT = new ArrayList<>();
-//		List<Integer> joursCP = new ArrayList<>();
-//		List<Integer> joursCSS = new ArrayList<>();
-//		List<Integer> joursMISSIONS = new ArrayList<>();
-//
-//		for (DemandeAbsenceDTO demande : listeDemandes) {
-//			if (demande.getType().equals(Type.RTT)) {
-//				for (LocalDate date = demande.getDateDebut(); date.isBefore(demande.getDateFin()); date.plusDays(1)) {
-//					joursRTT.add(date.getDayOfMonth());
-//				}
-//
-//			} else if (demande.getType().equals(Type.CONGES_PAYES)) {
-//				for (LocalDate date = demande.getDateDebut(); date.isBefore(demande.getDateFin()); date.plusDays(1)) {
-//					joursCP.add(date.getDayOfMonth());
-//				}
-//
-//			} else if (demande.getType().equals(Type.CONGES_SANS_SOLDE)) {
-//				for (LocalDate date = demande.getDateDebut(); date.isBefore(demande.getDateFin()); date.plusDays(1)) {
-//					joursCSS.add(date.getDayOfMonth());
-//				}
-//
-//				// TODO : rechercher les missions
-//			} else if (demande.getType().equals(Type.MISSION)) {
-//				for (LocalDate date = demande.getDateDebut(); date.isBefore(demande.getDateFin()); date.plusDays(1)) {
-//					joursMISSIONS.add(date.getDayOfMonth());
-//				}
-//
-//			}
-//
-//		}
-//	}
+	// public List<Absence> demandesParMoisParCollegue(int mois, int annee) {
+	//
+	// LocalDate moisDateDebut = LocalDate.of(annee, mois, 1);
+	// LocalDate moisDateFin = LocalDate.of(annee, mois, 28);
+	//
+	// // détermine combien de jours dans le mois
+	// int moisPairs[] = { 4, 6, 9, 11 };
+	//
+	// if (Year.isLeap(annee)) {
+	// int moisImpairsBiss[] = { 1, 3, 5, 7, 8, 10, 12 };
+	// for (int mP : moisPairs) {
+	// if (mois != mP) {
+	// for (int mI : moisImpairsBiss) {
+	// if (mois != mI) {
+	// moisDateFin = LocalDate.of(annee, mois, 29);
+	// } else {
+	// moisDateFin = LocalDate.of(annee, mois, 31);
+	// }
+	// }
+	// } else {
+	// moisDateFin = LocalDate.of(annee, mois, 30);
+	// }
+	// }
+	//
+	// } else {
+	// int moisImpairs[] = { 1, 3, 5, 7, 8, 10, 12 };
+	// for (int mP : moisPairs) {
+	// if (mois != mP) {
+	// for (int mI : moisImpairs) {
+	// if (mois != mI) {
+	// moisDateFin = LocalDate.of(annee, mois, 28);
+	// } else {
+	// moisDateFin = LocalDate.of(annee, mois, 31);
+	// }
+	// }
+	// } else {
+	// moisDateFin = LocalDate.of(annee, mois, 30);
+	// }
+	// }
+	//
+	// }
+	//
+	// // penser à aussi trier par département
+	// List<DemandeAbsenceDTO> listeDemandes =
+	// demRepo.findAbsencesParMois(moisDateDebut, moisDateFin)
+	// .orElseThrow(() -> new DemandeNonTrouveException("Aucune demande trouvée
+	// pour cette période")).stream()
+	// .map(demande -> new
+	// DemandeAbsenceDTO(demande)).collect(Collectors.toList());
+	//
+	// // Pour chaque liste de demande de collègue, il faut extraire le jour de
+	// // chaque RTT, CP et CSS
+	// List<Integer> joursRTT = new ArrayList<>();
+	// List<Integer> joursCP = new ArrayList<>();
+	// List<Integer> joursCSS = new ArrayList<>();
+	// List<Integer> joursMISSIONS = new ArrayList<>();
+	//
+	// for (DemandeAbsenceDTO demande : listeDemandes) {
+	// if (demande.getType().equals(Type.RTT)) {
+	// for (LocalDate date = demande.getDateDebut();
+	// date.isBefore(demande.getDateFin()); date.plusDays(1)) {
+	// joursRTT.add(date.getDayOfMonth());
+	// }
+	//
+	// } else if (demande.getType().equals(Type.CONGES_PAYES)) {
+	// for (LocalDate date = demande.getDateDebut();
+	// date.isBefore(demande.getDateFin()); date.plusDays(1)) {
+	// joursCP.add(date.getDayOfMonth());
+	// }
+	//
+	// } else if (demande.getType().equals(Type.CONGES_SANS_SOLDE)) {
+	// for (LocalDate date = demande.getDateDebut();
+	// date.isBefore(demande.getDateFin()); date.plusDays(1)) {
+	// joursCSS.add(date.getDayOfMonth());
+	// }
+	//
+	// // TODO : rechercher les missions
+	// } else if (demande.getType().equals(Type.MISSION)) {
+	// for (LocalDate date = demande.getDateDebut();
+	// date.isBefore(demande.getDateFin()); date.plusDays(1)) {
+	// joursMISSIONS.add(date.getDayOfMonth());
+	// }
+	//
+	// }
+	//
+	// }
+	// }
 
 }
