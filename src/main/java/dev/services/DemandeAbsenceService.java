@@ -77,10 +77,10 @@ public class DemandeAbsenceService {
 			throw new DemandeInvalideException("Le délai entre la demande et le début de l'absence doit être d'au moins un jour");
 		}
 		
-		Optional<List<DemandeAbsence>> demandeConcurrentes = demandeRepo.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin());
+		Optional<List<DemandeAbsence>> demandeConcurrentes = demandeRepo.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin(), demande.getEmail());
 		
 		if(demandeConcurrentes.isPresent() && demandeConcurrentes.get().size() > 0) {
-			throw new DemandeInvalideException("Votre demande chevauche la période d'absence d'un autre collègue");
+			throw new DemandeInvalideException("Votre demande chevauche la période d'absence d'une autre de vos demandes");
 		}
 		
 		DemandeAbsence nouvelleDemande = new DemandeAbsence(demande);
@@ -144,7 +144,8 @@ public class DemandeAbsenceService {
 	 * @return List<DemandeAbsenceDTO>
 	 */
 	public List<DemandeAbsenceDTO> listeDemandesValideesParEmail(String email) {
-		return demandeRepo.findByCollegueConcerneEmail(email).stream()
+		return demandeRepo.findByCollegueConcerneEmail(email).orElseThrow(() -> new CollegueNonTrouveException("Aucun collègue ayant cet email n'a été trouvé"))
+				.stream()
 				.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
 				.map(demande -> new DemandeAbsenceDTO(demande))
 				.collect(Collectors.toList());
