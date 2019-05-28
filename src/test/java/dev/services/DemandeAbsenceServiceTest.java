@@ -124,7 +124,7 @@ public class DemandeAbsenceServiceTest {
 		list.add(demandeInitiale);
 		
 		Mockito.when(crMock.findByEmail(demande.getEmail())).thenReturn(Optional.of(collegue));
-		Mockito.when(drMock.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin())).thenReturn(Optional.of(list));
+		Mockito.when(drMock.findConcurrentAbsence(demande.getDateDebut(), demande.getDateFin(), demande.getEmail())).thenReturn(Optional.of(list));
 		
 		LOG.info("Lorsqu'on tente de sauvegarder cette demande");
 		LOG.info("Alors une exception est renvoyée");

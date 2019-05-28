@@ -28,7 +28,6 @@ import org.springframework.web.client.RestTemplate;
 import dev.controller.vm.DemandeAbsenceDTO;
 import dev.controller.vm.MissionDTO;
 import dev.domain.Collegue;
-import dev.domain.enums.Role;
 import dev.repository.CollegueRepo;
 import dev.services.DemandeAbsenceService;
 
@@ -38,7 +37,7 @@ public class GestionAbsenceController {
 
 	@Autowired
 	DemandeAbsenceService service;
-	
+
 	@Autowired
 	CollegueRepo colRepo;
 
@@ -97,12 +96,13 @@ public class GestionAbsenceController {
 	 * 
 	 * @param email
 	 * @return List<DemandeAbsenceDTO>
-	 * @throws URISyntaxException 
-	 * @throws RestClientException 
+	 * @throws URISyntaxException
+	 * @throws RestClientException
 	 */
 	@GetMapping("/listeAbsences")
 	@Secured("ROLE_UTILISATEUR")
-	public ResponseEntity<List<DemandeAbsenceDTO>> recupDemandesParEmploye(@RequestParam("email") String email, HttpServletRequest request) throws RestClientException, URISyntaxException {
+	public ResponseEntity<List<DemandeAbsenceDTO>> recupDemandesParEmploye(@RequestParam("email") String email,
+			HttpServletRequest request) throws RestClientException, URISyntaxException {
 
 		String get = "https://missions-back.cleverapps.io/collegue/id/";
 
@@ -110,22 +110,20 @@ public class GestionAbsenceController {
 		// connexion
 		Collegue collegueConnecte = colRepo.findByEmail(email)
 				.orElseThrow(() -> new IllegalArgumentException("L'email ne correspond à aucun collegue"));
-		
+
 		// On récupère la liste des demandes
 		List<DemandeAbsenceDTO> listeDemandes = service.listeDemandesParEmploye(email);
 
-		if(! collegueConnecte.getRoles().contains(Role.ROLE_MANAGER)){
-			
-			// On récupère le cookie et one le transfère dans la requête vers l'API
-			// gestion des missions
-			ResponseEntity<MissionDTO[]> respHttp2 = rt.exchange(RequestEntity.get(new URI(get + collegueConnecte.getId()))
-					.header("Cookie", request.getHeader("Cookie")).build(), MissionDTO[].class);
-			
-			// On transforme la liste des missions récupérées en demandes et on les injecte dans la liste des demandes
-			if(respHttp2.getStatusCodeValue() == 200) {
-				Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission, email)).collect(Collectors.toList())
-				.forEach(demande -> listeDemandes.add(demande));			
-			}
+		// On récupère le cookie et one le transfère dans la requête vers l'API
+		// gestion des missions
+		ResponseEntity<MissionDTO[]> respHttp2 = rt.exchange(RequestEntity.get(new URI(get + collegueConnecte.getId()))
+				.header("Cookie", request.getHeader("Cookie")).build(), MissionDTO[].class);
+
+		// On transforme la liste des missions récupérées en demandes et on les
+		// injecte dans la liste des demandes
+		if (respHttp2.getStatusCodeValue() == 200 && respHttp2.getBody() != null) {
+			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission, email))
+					.collect(Collectors.toList()).forEach(demande -> listeDemandes.add(demande));
 		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(listeDemandes);
