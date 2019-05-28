@@ -1,6 +1,9 @@
 package dev.services;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -64,6 +67,8 @@ public class TraitementNuit {
 
 		for (DemandeAbsence demande : demandesATraiter) {
 			
+			int decompteWeekends = TraitementNuit.recupCompteWeekends(demande.getDateDebut(), demande.getDateFin());
+			
 			// Pour les congés payés
 			if (demande.getType().equals(Type.CONGES_PAYES)){
 				
@@ -71,8 +76,9 @@ public class TraitementNuit {
 				
 					
 					demande.setStatus(Status.EN_ATTENTE_VALIDATION);
+					
 					demande.getCollegueConcerne().setSoldeCongesPayes(demande.getCollegueConcerne().getSoldeCongesPayes()
-							- Period.between(demande.getDateDebut(), demande.getDateFin()).getDays());
+							- decompteWeekends);
 					
 					serviceDemande.sauvegarderModifDemandesTN(demande);
 					
@@ -94,10 +100,9 @@ public class TraitementNuit {
 				if (demande.getCollegueConcerne().getSoldeRTT() >= Period
 						.between(demande.getDateDebut(), demande.getDateFin()).getDays()) {
 					
-					
 					demande.setStatus(Status.EN_ATTENTE_VALIDATION);
 					demande.getCollegueConcerne().setSoldeRTT(demande.getCollegueConcerne().getSoldeRTT()
-							- Period.between(demande.getDateDebut(), demande.getDateFin()).getDays());
+							- decompteWeekends);
 					
 					serviceDemande.sauvegarderModifDemandesTN(demande);
 					
@@ -122,7 +127,7 @@ public class TraitementNuit {
 					demande.setStatus(Status.EN_ATTENTE_VALIDATION);
 					
 					demande.getCollegueConcerne().setSoldeCongesSansSolde(demande.getCollegueConcerne().getSoldeCongesSansSolde()
-							- Period.between(demande.getDateDebut(), demande.getDateFin()).getDays());
+							- decompteWeekends);
 					
 					serviceDemande.sauvegarderModifDemandesTN(demande);
 					
@@ -160,6 +165,36 @@ public class TraitementNuit {
 			System.out.println(response.getStatus());
 			System.out.println(response.getData());				
 		}
+		
+	}
+	
+	/**
+	 * Permet de calculer le nombre de jour durant la période analysée qui tombent un weekend
+	 * 
+	 * @param debut
+	 * @param fin
+	 * @return
+	 */
+	public static int recupCompteWeekends(LocalDate debut, LocalDate fin) {
+		
+		// Prise en compte des weekends dans le calcul du solde 
+		List<LocalDate> weekends = new ArrayList<>();
+		
+		int periodeConges = Period.between(debut, fin).getDays();
+		
+		for(int i = 0; i < periodeConges; i++) {
+			
+			LocalDate plusDays = debut.plusDays(i);
+			
+			if(plusDays.getDayOfWeek().equals(DayOfWeek.SATURDAY) || plusDays.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+				weekends.add(plusDays);
+			}
+			
+		}
+		
+		periodeConges -= weekends.size();
+		
+		return periodeConges;
 		
 	}
 

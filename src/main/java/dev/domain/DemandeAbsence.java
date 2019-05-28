@@ -19,7 +19,7 @@ import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 
 /**
- * Entité représentatn une demande d'absence,
+ * Entité représentant une demande d'absence,
  * elle est stockées en base de données en vue du traitement de nuit
  * 
  * @author Nicolas

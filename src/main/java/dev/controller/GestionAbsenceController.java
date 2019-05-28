@@ -37,7 +37,7 @@ public class GestionAbsenceController {
 
 	@Autowired
 	DemandeAbsenceService service;
-	
+
 	@Autowired
 	CollegueRepo colRepo;
 
@@ -96,12 +96,13 @@ public class GestionAbsenceController {
 	 * 
 	 * @param email
 	 * @return List<DemandeAbsenceDTO>
-	 * @throws URISyntaxException 
-	 * @throws RestClientException 
+	 * @throws URISyntaxException
+	 * @throws RestClientException
 	 */
 	@GetMapping("/listeAbsences")
 	@Secured("ROLE_UTILISATEUR")
-	public ResponseEntity<List<DemandeAbsenceDTO>> recupDemandesParEmploye(@RequestParam("email") String email, HttpServletRequest request) throws RestClientException, URISyntaxException {
+	public ResponseEntity<List<DemandeAbsenceDTO>> recupDemandesParEmploye(@RequestParam("email") String email,
+			HttpServletRequest request) throws RestClientException, URISyntaxException {
 
 		String get = "https://missions-back.cleverapps.io/collegue/id/";
 
@@ -110,18 +111,19 @@ public class GestionAbsenceController {
 		Collegue collegueConnecte = colRepo.findByEmail(email)
 				.orElseThrow(() -> new IllegalArgumentException("L'email ne correspond à aucun collegue"));
 
+		// On récupère la liste des demandes
+		List<DemandeAbsenceDTO> listeDemandes = service.listeDemandesParEmploye(email);
+
 		// On récupère le cookie et one le transfère dans la requête vers l'API
 		// gestion des missions
 		ResponseEntity<MissionDTO[]> respHttp2 = rt.exchange(RequestEntity.get(new URI(get + collegueConnecte.getId()))
 				.header("Cookie", request.getHeader("Cookie")).build(), MissionDTO[].class);
-		
-		// On récupère la liste des demandes
-		List<DemandeAbsenceDTO> listeDemandes = service.listeDemandesParEmploye(email);
-		
-		// On transforme la liste des missions récupérées en demandes et on les injecte dans la liste des demandes
-		if(respHttp2.getStatusCodeValue() == 200) {
-			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission, email)).collect(Collectors.toList())
-			.forEach(demande -> listeDemandes.add(demande));			
+
+		// On transforme la liste des missions récupérées en demandes et on les
+		// injecte dans la liste des demandes
+		if (respHttp2.getStatusCodeValue() == 200 && respHttp2.getBody() != null) {
+			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission, email))
+					.collect(Collectors.toList()).forEach(demande -> listeDemandes.add(demande));
 		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(listeDemandes);
