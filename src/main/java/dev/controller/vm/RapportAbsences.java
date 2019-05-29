@@ -16,6 +16,10 @@ public class RapportAbsences {
 
 	private List<Absences> listeAbsences;
 
+	public RapportAbsences() {
+
+	}
+
 	public RapportAbsences(List<Integer> joursWeekEnd, List<Absences> listeAbsences) {
 		this.joursWeekEnd = joursWeekEnd;
 		this.listeAbsences = listeAbsences;
