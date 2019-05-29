@@ -24,8 +24,10 @@ import dev.domain.DemandeAbsence;
 import dev.domain.enums.Status;
 import dev.domain.enums.Type;
 import dev.exceptions.DemandeNonTrouveException;
+import dev.exceptions.DepartementInvalideException;
 import dev.repository.CollegueRepo;
 import dev.repository.DemandeAbsenceRepo;
+import dev.repository.DepartementRepo;
 
 @Service
 public class ManagerService {
@@ -35,6 +37,40 @@ public class ManagerService {
 
 	@Autowired
 	DemandeAbsenceRepo demRepo;
+
+	@Autowired
+	DepartementRepo depRepo;
+
+	/**
+	 * Permet d'utiliser un Mock à la place du vrai repository pour les tests
+	 * unitaires
+	 * 
+	 * @param repo
+	 */
+	public void setCollegueRepo(CollegueRepo repo) {
+		colRepo = repo;
+	}
+
+	/**
+	 * Permet d'utiliser un Mock à la place du vrai repository pour les tests
+	 * unitaires
+	 * 
+	 * @param repo
+	 */
+	public void setDemandeRepo(DemandeAbsenceRepo repo) {
+		demRepo = repo;
+	}
+	
+	/**
+	 * Permet d'utiliser un Mock à la place du vrai repository pour les tests
+	 * unitaires
+	 * 
+	 * @param repo
+	 */
+	public void setDepartementRepo(DepartementRepo repo) {
+		depRepo = repo;
+	}
+
 
 	/**
 	 * Retourne la liste des demandes en attentes de validation par le manager
@@ -94,21 +130,30 @@ public class ManagerService {
 	}
 
 	/**
-	 * Récupère la liste des demandes d'absences et les retourne sous forme de
-	 * DTO
+	 * Récupère la liste des demandes d'absences par collègue et par mois et les
+	 * retourne sous forme de d'une rapport avec les week-end du mois et les
+	 * demandes d'absences associées
 	 * 
-	 * @return List<DemandeAbsenceDTO>
+	 * @return RapportAbsences
 	 */
 	public RapportAbsences demandesParMoisParCollegue(Integer mois, Integer annee, Long departement) {
+
+		if (departement == null) {
+			throw new DepartementInvalideException(
+					"Vous n'avez renseigné aucun département");
+		}
+
+		// penser à vérifer département non existant
+		depRepo.findById(departement).orElseThrow(() -> new DepartementInvalideException(
+				"Le département que vous avez choisi ne figure pas dans la base de données"));
+
 
 		LocalDate moisDateDebut = LocalDate.of(annee, mois, 1);
 		LocalDate moisDateFinLocal = LocalDate.of(annee, mois, 28);
 		int nbJourMois = moisDateFinLocal.lengthOfMonth();
-		
+
 		LocalDate moisDateFin = LocalDate.of(annee, mois, nbJourMois);
 
-
-		
 		System.out.println(moisDateFin);
 		List<DemandeAbsence> demandes = demRepo.findAbsencesParMoisParDepartement(moisDateDebut, moisDateFin,
 				departement);
@@ -145,13 +190,43 @@ public class ManagerService {
 				}
 
 			} else if (uneDemande.getType().equals(Type.CONGES_PAYES)) {
-				for (LocalDate date = uneDemande.getDateDebut(); date.isBefore(moisDateFin); date = date.plusDays(1)) {
-					joursCP.add(date.getDayOfMonth());
+				if (uneDemande.getDateFin().getMonthValue() == mois
+						&& uneDemande.getDateDebut().getMonthValue() == mois) {
+					for (LocalDate date = uneDemande.getDateDebut(); date
+							.isBefore(uneDemande.getDateFin().plusDays(1)); date = date.plusDays(1)) {
+						joursCP.add(date.getDayOfMonth());
+
+					}
+				} else if (uneDemande.getDateDebut().getMonthValue() == mois) {
+					for (LocalDate date = uneDemande.getDateDebut(); date
+							.isBefore(moisDateFin.plusDays(1)); date = date.plusDays(1)) {
+						joursCP.add(date.getDayOfMonth());
+					}
+				} else if (uneDemande.getDateFin().getMonthValue() == mois) {
+					for (LocalDate date = moisDateDebut; date
+							.isBefore(uneDemande.getDateFin().plusDays(1)); date = date.plusDays(1)) {
+						joursCP.add(date.getDayOfMonth());
+					}
 				}
 
 			} else if (uneDemande.getType().equals(Type.CONGES_SANS_SOLDE)) {
-				for (LocalDate date = uneDemande.getDateDebut(); date.isBefore(moisDateFin); date = date.plusDays(1)) {
-					joursCSS.add(date.getDayOfMonth());
+				if (uneDemande.getDateFin().getMonthValue() == mois
+						&& uneDemande.getDateDebut().getMonthValue() == mois) {
+					for (LocalDate date = uneDemande.getDateDebut(); date
+							.isBefore(uneDemande.getDateFin().plusDays(1)); date = date.plusDays(1)) {
+						joursCSS.add(date.getDayOfMonth());
+
+					}
+				} else if (uneDemande.getDateDebut().getMonthValue() == mois) {
+					for (LocalDate date = uneDemande.getDateDebut(); date
+							.isBefore(moisDateFin.plusDays(1)); date = date.plusDays(1)) {
+						joursCSS.add(date.getDayOfMonth());
+					}
+				} else if (uneDemande.getDateFin().getMonthValue() == mois) {
+					for (LocalDate date = moisDateDebut; date
+							.isBefore(uneDemande.getDateFin().plusDays(1)); date = date.plusDays(1)) {
+						joursCSS.add(date.getDayOfMonth());
+					}
 				}
 
 			}
