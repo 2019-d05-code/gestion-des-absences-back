@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.controller.vm.DemandeAbsenceValidationDTO;
+import dev.controller.vm.DepartementDTO;
 import dev.controller.vm.RapportAbsences;
 import dev.controller.vm.SelectionAbsence;
+import dev.services.DepartementService;
 import dev.services.ManagerService;
 
 /**
@@ -32,6 +34,9 @@ public class ManagerController {
 	
 	@Autowired
 	ManagerService service;
+	
+	@Autowired
+	DepartementService dptService;
 
 	/**
 	 * Renvoie la liste des demandes en attente de validation au manager
@@ -85,6 +90,20 @@ public class ManagerController {
 	public ResponseEntity<RapportAbsences> demandesParMoisParCollegue(@RequestBody SelectionAbsence select) {
 		
 		RapportAbsences liste = service.demandesParMoisParCollegue(select.getMois(), select.getAnnee(), select.getDepartement());
+		
+		return ResponseEntity.status(HttpStatus.OK).body(liste);
+	}
+	
+	/**
+	 * Renvoie la liste des départements
+	 * 
+	 * @return List<DepartementDTO>
+	 */
+	@GetMapping("/departements")
+	@Secured("ROLE_MANAGER")
+	public ResponseEntity<List<DepartementDTO>> recupDepartements() {
+		
+		List<DepartementDTO> liste = dptService.recupererDepartements();
 		
 		return ResponseEntity.status(HttpStatus.OK).body(liste);
 	}

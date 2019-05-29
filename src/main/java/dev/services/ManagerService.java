@@ -97,7 +97,7 @@ public class ManagerService {
 	 * Récupère la liste des demandes d'absences et les retourne sous forme de
 	 * DTO
 	 * 
-	 * @return List<DemandeAbsenceDTO>
+	 * @return RapportAbsences
 	 */
 	public RapportAbsences demandesParMoisParCollegue(Integer mois, Integer annee, Long departement) {
 
