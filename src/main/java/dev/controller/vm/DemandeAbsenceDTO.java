@@ -90,6 +90,15 @@ public class DemandeAbsenceDTO {
 		this.type = Type.MISSION;
 		this.email = email;
 	}
+	
+	public DemandeAbsenceDTO(MissionDTO mission) {
+		this.id = mission.getId();
+		this.dateDebut = mission.getDateDebut();
+		this.dateFin = mission.getDateFin();
+		this.motif = mission.getNature();
+		this.status = mission.getStatut();
+		this.type = Type.MISSION;
+	}
 
 	/**
 	 * @return LocalDate

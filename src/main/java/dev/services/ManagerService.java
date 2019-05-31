@@ -154,7 +154,6 @@ public class ManagerService {
 
 		LocalDate moisDateFin = LocalDate.of(annee, mois, nbJourMois);
 
-		System.out.println(moisDateFin);
 		List<DemandeAbsence> demandes = demRepo.findAbsencesParMoisParDepartement(moisDateDebut, moisDateFin,
 				departement);
 		List<Absences> listeAbsences = new ArrayList<Absences>();
@@ -231,16 +230,6 @@ public class ManagerService {
 
 			}
 
-			// TODO : rechercher les missions
-			// } else if (uneDemande.getType().equals(Type.MISSION)) {
-			// for (LocalDate date = uneDemande.getDateDebut();
-			// date.isBefore(uneDemande.getDateFin()); date.plusDays(1)) {
-			// joursMISSIONS.add(date.getDayOfMonth());
-			// }
-			//
-			// }
-
-			// Penser à rajouter les missions dans un 2e temps
 			String prenomCollegue = uneDemande.getCollegueConcerne().getPrenom();
 			String nomCollegue = uneDemande.getCollegueConcerne().getNom();
 			listeAbsences.add(new Absences(nomCollegue, prenomCollegue, joursRTT, joursCP, joursCSS));
