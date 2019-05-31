@@ -138,6 +138,26 @@ public class StartupListener {
         demTest2.setCollegueConcerne(col1);
         this.demandeRepo.save(demTest2);
         
+        DemandeAbsence demTest3 = new DemandeAbsence();
+        demTest3.setDateDebut(LocalDate.of(2019, 9, 5));
+        demTest3.setDateFin(LocalDate.of(2019, 9, 20));
+        demTest3.setHeureCreation(LocalDateTime.now());
+        demTest3.setType(Type.RTT);
+        demTest3.setMotif("Julie");
+        demTest3.setStatus(Status.VALIDEE);
+        demTest3.setCollegueConcerne(col2);
+        this.demandeRepo.save(demTest3);
+        
+        DemandeAbsence demTest4 = new DemandeAbsence();
+        demTest4.setDateDebut(LocalDate.of(2019, 9, 5));
+        demTest4.setDateFin(LocalDate.of(2019, 9, 20));
+        demTest4.setHeureCreation(LocalDateTime.now());
+        demTest4.setType(Type.CONGES_PAYES);
+        demTest4.setMotif("Katrina");
+        demTest4.setStatus(Status.VALIDEE);
+        demTest4.setCollegueConcerne(col3);
+        this.demandeRepo.save(demTest4);
+        
         // Création de demandes d'absences test pour le traitement de nuit
         
         DemandeAbsence demandeEnAttente1 = new DemandeAbsence();
