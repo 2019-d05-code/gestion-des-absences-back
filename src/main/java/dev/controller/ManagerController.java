@@ -1,9 +1,17 @@
 package dev.controller;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
+import dev.controller.vm.DemandeAbsenceDTO;
 import dev.controller.vm.DemandeAbsenceValidationDTO;
 import dev.controller.vm.DepartementDTO;
+import dev.controller.vm.MissionDTO;
 import dev.controller.vm.RapportAbsences;
 import dev.controller.vm.SelectionAbsence;
 import dev.services.DepartementService;
@@ -37,6 +49,8 @@ public class ManagerController {
 
 	@Autowired
 	DepartementService dptService;
+	
+	RestTemplate rt = new RestTemplate();
 
 	/**
 	 * Renvoie la liste des demandes en attente de validation au manager
@@ -106,6 +120,38 @@ public class ManagerController {
 	public ResponseEntity<List<DepartementDTO>> recupDepartements() {
 
 		return ResponseEntity.status(HttpStatus.OK).body(dptService.recupererDepartements());
+	}
+	
+	/**
+	 * Permet de récupérer l'ensemble des missions depuis l'API gestion des missions
+	 * 
+	 * @param request
+	 * @return
+	 * @throws RestClientException
+	 * @throws URISyntaxException
+	 */
+	@GetMapping("/missions")
+	@Secured("ROLE_MANAGER")
+	public ResponseEntity<List<DemandeAbsenceDTO>> recupToutesLesMission(HttpServletRequest request) throws RestClientException, URISyntaxException {
+		
+		String get = "https://missions-back.cleverapps.io/mission/";
+
+		// On récupère le cookie et one le transfère dans la requête vers l'API
+		// gestion des missions
+		ResponseEntity<MissionDTO[]> respHttp2 = rt.exchange(RequestEntity.get(new URI(get))
+				.header("Cookie", request.getHeader("Cookie")).build(), MissionDTO[].class);
+
+		// On transforme la liste des missions récupérées en demandes et on les
+		// injecte dans la liste des demandes
+		
+		List<DemandeAbsenceDTO> missions = new ArrayList<>();
+		
+		if (respHttp2.getStatusCodeValue() == 200 && respHttp2.getBody() != null) {
+			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission))
+					.collect(Collectors.toList()).forEach(demande -> missions.add(demande));
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(missions);
 	}
 
 }
