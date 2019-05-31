@@ -131,9 +131,9 @@ public class ManagerController {
 	 * @throws RestClientException
 	 * @throws URISyntaxException
 	 */
-	@GetMapping("/departement/{id}/missions")
+	@GetMapping("/departements/missions")
 	@Secured("ROLE_MANAGER")
-	public ResponseEntity<List<DemandeAbsenceValidationDTO>> recupToutesLesMission(HttpServletRequest request, @PathVariable Long id) throws RestClientException, URISyntaxException {
+	public ResponseEntity<List<DemandeAbsenceValidationDTO>> recupToutesLesMission(HttpServletRequest request, SelectionAbsence selection) throws RestClientException, URISyntaxException {
 		
 		String get = "https://missions-back.cleverapps.io/mission/";
 
@@ -149,8 +149,9 @@ public class ManagerController {
 		
 		if (respHttp2.getStatusCodeValue() == 200 && respHttp2.getBody() != null) {
 			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission))
-					.filter(demande -> service.recupListEmailDep(id, demande))
+					.filter(demande -> service.recupListEmailDep(selection.getDepartement(), demande))
 					.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
+					.filter(demande -> demande.getDateDebut().getMonth().getValue() == selection.getMois())
 					.map(demande -> service.transformerDemande(demande))
 					.collect(Collectors.toList()).forEach(demande -> missions.add(demande));
 		}
