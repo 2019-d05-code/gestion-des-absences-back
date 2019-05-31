@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.controller.vm.Absences;
+import dev.controller.vm.DemandeAbsenceDTO;
 /**
  * Gestion du CRUD relative à l'affichage des absences coté manager
  * 
@@ -20,9 +21,11 @@ import dev.controller.vm.Absences;
  */
 import dev.controller.vm.DemandeAbsenceValidationDTO;
 import dev.controller.vm.RapportAbsences;
+import dev.domain.Collegue;
 import dev.domain.DemandeAbsence;
 import dev.domain.enums.Status;
 import dev.domain.enums.Type;
+import dev.exceptions.CollegueNonTrouveException;
 import dev.exceptions.DemandeNonTrouveException;
 import dev.exceptions.DepartementInvalideException;
 import dev.repository.CollegueRepo;
@@ -248,6 +251,24 @@ public class ManagerService {
 		// Ajout du tableau d'absences dans le rapport
 
 		return new RapportAbsences(weekEnd, listeAbsences);
+	}
+	
+	public boolean recupListEmailDep(long id, DemandeAbsenceDTO demande) {
+		
+		boolean exist = false;
+		
+		Collegue collegue = colRepo.findByEmail(demande.getEmail()).orElseThrow(() -> new CollegueNonTrouveException("Aucun collègue ayant cet email n'a été trouvé"));
+		
+		if(collegue.getDepartement().getId() == id) {
+			exist = true;
+		}
+		
+		return exist;
+	}
+	
+	public DemandeAbsenceValidationDTO transformerDemande(DemandeAbsenceDTO demande) {
+		Collegue collegue = colRepo.findByEmail(demande.getEmail()).orElseThrow(() -> new CollegueNonTrouveException("Aucun collègue ayant cet email n'a été trouvé"));
+		return new DemandeAbsenceValidationDTO(demande, collegue.getNom(), collegue.getPrenom());
 	}
 
 }

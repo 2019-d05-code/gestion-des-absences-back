@@ -31,6 +31,7 @@ import dev.controller.vm.DepartementDTO;
 import dev.controller.vm.MissionDTO;
 import dev.controller.vm.RapportAbsences;
 import dev.controller.vm.SelectionAbsence;
+import dev.domain.enums.Status;
 import dev.services.DepartementService;
 import dev.services.ManagerService;
 
@@ -130,9 +131,9 @@ public class ManagerController {
 	 * @throws RestClientException
 	 * @throws URISyntaxException
 	 */
-	@GetMapping("/missions")
+	@GetMapping("/departement/{id}/missions")
 	@Secured("ROLE_MANAGER")
-	public ResponseEntity<List<DemandeAbsenceDTO>> recupToutesLesMission(HttpServletRequest request) throws RestClientException, URISyntaxException {
+	public ResponseEntity<List<DemandeAbsenceValidationDTO>> recupToutesLesMission(HttpServletRequest request, @PathVariable Long id) throws RestClientException, URISyntaxException {
 		
 		String get = "https://missions-back.cleverapps.io/mission/";
 
@@ -144,10 +145,13 @@ public class ManagerController {
 		// On transforme la liste des missions récupérées en demandes et on les
 		// injecte dans la liste des demandes
 		
-		List<DemandeAbsenceDTO> missions = new ArrayList<>();
+		List<DemandeAbsenceValidationDTO> missions = new ArrayList<>();
 		
 		if (respHttp2.getStatusCodeValue() == 200 && respHttp2.getBody() != null) {
 			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission))
+					.filter(demande -> service.recupListEmailDep(id, demande))
+					.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
+					.map(demande -> service.transformerDemande(demande))
 					.collect(Collectors.toList()).forEach(demande -> missions.add(demande));
 		}
 		
