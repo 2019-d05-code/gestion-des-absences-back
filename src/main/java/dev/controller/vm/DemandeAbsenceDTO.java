@@ -98,6 +98,7 @@ public class DemandeAbsenceDTO {
 		this.motif = mission.getNature();
 		this.status = mission.getStatut();
 		this.type = Type.MISSION;
+		this.email = mission.getEmailColl();
 	}
 
 	/**

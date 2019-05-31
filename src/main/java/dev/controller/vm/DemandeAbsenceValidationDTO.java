@@ -31,6 +31,18 @@ public class DemandeAbsenceValidationDTO extends DemandeAbsenceDTO {
 		this.nom = demande.getCollegueConcerne().getNom();
 		this.prenom = demande.getCollegueConcerne().getPrenom();
 	}
+	
+	public DemandeAbsenceValidationDTO(DemandeAbsenceDTO demande, String nom, String prenom) {
+		this.setDateDebut(demande.getDateDebut());
+		this.setDateFin(demande.getDateFin());
+		this.setMotif(demande.getMotif());
+		this.setStatus(demande.getStatus());
+		this.setEmail(demande.getEmail());
+		this.setId(demande.getId());
+		this.setType(demande.getType());
+		this.nom = nom;
+		this.prenom = prenom;
+	}
 
 	/**
 	 * @return the nom

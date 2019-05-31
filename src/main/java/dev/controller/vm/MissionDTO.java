@@ -27,6 +27,8 @@ public class MissionDTO {
 	private String transport;
 
 	private Status statut;
+	
+	private String emailColl;
 
 	public MissionDTO() {
 		/**
@@ -152,5 +154,19 @@ public class MissionDTO {
 	 */
 	public void setTransport(String transport) {
 		this.transport = transport;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmailColl() {
+		return emailColl;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmailColl(String email) {
+		this.emailColl = email;
 	}
 }
