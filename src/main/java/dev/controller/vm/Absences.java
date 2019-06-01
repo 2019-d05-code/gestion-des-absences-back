@@ -31,6 +31,13 @@ public class Absences {
 		this.joursCSS = joursCSS;
 
 	}
+	
+	public Absences(String nomCollegue, String prenomCollegue, List<Integer> joursMISSIONS) {
+		this.nomCollegue = nomCollegue;
+		this.prenomCollegue = prenomCollegue;
+		this.joursMISSIONS = joursMISSIONS;
+
+	}
 
 
 
