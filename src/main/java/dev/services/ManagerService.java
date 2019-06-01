@@ -253,7 +253,14 @@ public class ManagerService {
 		return new RapportAbsences(weekEnd, listeAbsences);
 	}
 	
-	public boolean recupListEmailDep(long id, DemandeAbsenceDTO demande) {
+	/**
+	 * Vérifie si un collègue existe dans la base de données et dans un département précis
+	 * 
+	 * @param id
+	 * @param demande
+	 * @return boolean
+	 */
+	public boolean verifColExist(long id, DemandeAbsenceDTO demande) {
 		
 		boolean exist = false;
 		
@@ -266,6 +273,12 @@ public class ManagerService {
 		return exist;
 	}
 	
+	/**
+	 * Transforme une demande d'absence DTO en DemandeAbsenceValidationDTO
+	 * 
+	 * @param demande
+	 * @return DemandeAbsenceValidationDTO
+	 */
 	public DemandeAbsenceValidationDTO transformerDemande(DemandeAbsenceDTO demande) {
 		Collegue collegue = colRepo.findByEmail(demande.getEmail()).orElseThrow(() -> new CollegueNonTrouveException("Aucun collègue ayant cet email n'a été trouvé"));
 		return new DemandeAbsenceValidationDTO(demande, collegue.getNom(), collegue.getPrenom());
