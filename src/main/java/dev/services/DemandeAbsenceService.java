@@ -292,9 +292,9 @@ public class DemandeAbsenceService {
 	 * 
 	 * @return List<JourFerieDTO>
 	 */
-	public List<JourFerieDTO> recupAbsenceCollective() {
+	public List<JourFerieDTO> recupAbsenceCollective(int annee) {
 
-		return jfRepo.findAll().stream().map(jf -> new JourFerieDTO(jf)).collect(Collectors.toList());
+		return jfRepo.findAll().stream().filter(jf -> jf.getDate().getYear() == annee).map(jf -> new JourFerieDTO(jf)).collect(Collectors.toList());
 
 	}
 
