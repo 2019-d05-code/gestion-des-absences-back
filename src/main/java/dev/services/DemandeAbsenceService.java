@@ -136,6 +136,9 @@ public class DemandeAbsenceService {
 			demandeRTTE.setCollegueConcerne(collegue);
 			demandeRTTE.setDateDebut(rtteDTO.getDate());
 			demandeRTTE.setDateFin(rtteDTO.getDate());
+			if(rtteDTO.getCommentaire() != null) {
+				demandeRTTE.setMotif(rtteDTO.getCommentaire());				
+			}
 			demandeRTTE.setType(Type.RTT_EMPLOYEUR);
 			demandeRTTE.setStatus(Status.INITIALE);
 
@@ -338,6 +341,7 @@ public class DemandeAbsenceService {
 		demandes.forEach(demande -> {
 			demande.setDateDebut(jourFerieDTO.getDate());
 			demande.setDateFin(jourFerieDTO.getDate());
+			demande.setMotif(jourFerieDTO.getCommentaire());				
 		});
 		
 		jourFerieAModif.setDate(jourFerieDTO.getDate());
