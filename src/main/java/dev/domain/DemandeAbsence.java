@@ -67,6 +67,7 @@ public class DemandeAbsence {
 	@ManyToOne
 	@JoinColumn(name = "collegue_concerne")
 	private Collegue collegueConcerne;
+	
 
 	public DemandeAbsence() {
 		/**
@@ -83,7 +84,6 @@ public class DemandeAbsence {
 		this.dateDebut = demande.getDateDebut();
 		this.dateFin = demande.getDateFin();
 		this.type = demande.getType();
-		
 		if(demande.getMotif() != null && demande.getMotif() != "") {
 			this.motif = demande.getMotif();
 		}

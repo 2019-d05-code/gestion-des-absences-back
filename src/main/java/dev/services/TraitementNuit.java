@@ -144,6 +144,17 @@ public class TraitementNuit {
 
 			}
 			
+			if(demande.getType().equals(Type.RTT_EMPLOYEUR)) {
+				
+				demande.getCollegueConcerne().setSoldeCongesSansSolde(demande.getCollegueConcerne().getSoldeRTT()
+						- 1);
+				
+				demande.setStatus(Status.VALIDEE);
+				
+				serviceDemande.enregistrementDemandeRTTEmployeurTN(demande);
+				
+			}
+			
 
 		}
 
