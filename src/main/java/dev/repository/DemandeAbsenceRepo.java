@@ -38,5 +38,5 @@ public interface DemandeAbsenceRepo extends JpaRepository<DemandeAbsence, Long> 
 	@Query("select d from DemandeAbsence d where ((d.dateDebut between :dateDebut and :dateFin) or (d.dateFin between :dateDebut and :dateFin)) and d.collegueConcerne.departement.id = :departement and d.status = 'VALIDEE'")
 	public List<DemandeAbsence> findAbsencesParMoisParDepartement(@Param("dateDebut") LocalDate dateDebut,
 			@Param("dateFin") LocalDate dateFin, @Param("departement") Long departement);
-
+	
 }

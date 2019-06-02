@@ -26,8 +26,10 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import dev.controller.vm.DemandeAbsenceDTO;
+import dev.controller.vm.JourFerieDTO;
 import dev.controller.vm.MissionDTO;
 import dev.domain.Collegue;
+import dev.domain.enums.Type;
 import dev.repository.CollegueRepo;
 import dev.services.DemandeAbsenceService;
 
@@ -76,18 +78,69 @@ public class GestionAbsenceController {
 	}
 
 	/**
-	 * Enregistre une demande de RTT employeur
+	 * Enregistre une demande de RTT employeur ou un jour férié
 	 * 
 	 * @param demandes
 	 * @return
 	 */
-	@PostMapping("/employeur-rtt")
-	@Secured("ROLE_MANAGER")
-	public ResponseEntity<Object> enregistrerDemandeRTTEmployeur(@RequestBody DemandeAbsenceDTO[] demandes) {
+	@PostMapping("/absence-collective")
+	@Secured("ROLE_ADMINISTRATEUR")
+	public ResponseEntity<Object> enregistrerAbsenceCollective(@RequestBody JourFerieDTO jf) {
 
-		service.enregistrementDemandeRTTEmployeur(demandes);
+		if (jf.getType().equals(Type.RTT_EMPLOYEUR)) {
+			service.enregistrementDemandeRTTEmployeur(jf);
+		} else {
+			service.sauvegarderJourFeriee(jf);
+		}
+
 		return ResponseEntity.status(HttpStatus.OK).build();
 
+	}
+
+	/**
+	 * Récupère les jours fériés et les RTT employeur
+	 * 
+	 * @param demandes
+	 * @return List<JourFerieDTO>
+	 */
+	@GetMapping("/absence-collective")
+	@Secured("ROLE_ADMINISTRATEUR")
+	public ResponseEntity<List<JourFerieDTO>> recupAbsencesCollectives(@RequestBody JourFerieDTO jf) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(service.recupAbsenceCollective());
+
+	}
+
+	/**
+	 * Modifie un jour férié ou un RTT employeur
+	 * 
+	 * @param jf
+	 * @param id
+	 * @return ResponseEntity
+	 */
+	@PatchMapping("/absence-collective/{id}")
+	@Secured("ROLE_ADMINISTRATEUR")
+	public ResponseEntity<Object> modifierAbsenceCollective(@RequestBody JourFerieDTO jf, @PathVariable Long id) {
+
+		service.modifierDemandeJFOuRTTE(jf, id);
+
+		return ResponseEntity.status(HttpStatus.OK).build();
+
+	}
+
+	/**
+	 * Supprime une absence collective de la base de données
+	 * 
+	 * @param id
+	 * @return ResponseEntity
+	 */
+	@DeleteMapping("/absence-collective/{id}")
+	@Secured("ROLE_ADMINISTRATEUR")
+	public ResponseEntity<Object> supprimerAbsenceCollective(@PathVariable Long id) {
+		
+		service.supprimerAbsenceCollective(id);
+
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	/**
