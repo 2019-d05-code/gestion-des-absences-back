@@ -17,7 +17,9 @@ public class RapportAbsences {
 	private List<Absences> listeAbsences;
 
 	public RapportAbsences() {
-
+		/**
+		 * Constructeur par défaut
+		 */
 	}
 
 	public RapportAbsences(List<Integer> joursWeekEnd, List<Absences> listeAbsences) {

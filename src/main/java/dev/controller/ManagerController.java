@@ -2,7 +2,7 @@ package dev.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -131,9 +131,9 @@ public class ManagerController {
 	 * @throws RestClientException
 	 * @throws URISyntaxException
 	 */
-	@GetMapping("/departement/{id}/missions")
+	@PostMapping("/departements/missions")
 	@Secured("ROLE_MANAGER")
-	public ResponseEntity<List<DemandeAbsenceValidationDTO>> recupToutesLesMission(HttpServletRequest request, @PathVariable Long id) throws RestClientException, URISyntaxException {
+	public ResponseEntity<RapportAbsences> recupToutesLesMission(HttpServletRequest request, @RequestBody SelectionAbsence selection) throws RestClientException, URISyntaxException {
 		
 		String get = "https://missions-back.cleverapps.io/mission/";
 
@@ -145,17 +145,22 @@ public class ManagerController {
 		// On transforme la liste des missions récupérées en demandes et on les
 		// injecte dans la liste des demandes
 		
-		List<DemandeAbsenceValidationDTO> missions = new ArrayList<>();
+		RapportAbsences rapport = new RapportAbsences();
+		LocalDate debutMois =  LocalDate.of(selection.getAnnee(), selection.getMois(), 1);
+		LocalDate finMois = LocalDate.of(selection.getAnnee(), selection.getMois(), debutMois.lengthOfMonth());
+		
 		
 		if (respHttp2.getStatusCodeValue() == 200 && respHttp2.getBody() != null) {
-			Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission))
-					.filter(demande -> service.recupListEmailDep(id, demande))
+			List<DemandeAbsenceValidationDTO> missions = Arrays.asList(respHttp2.getBody()).stream().map(mission -> new DemandeAbsenceDTO(mission))
+					.filter(demande -> service.verifColExist(selection.getDepartement(), demande))
 					.filter(demande -> demande.getStatus().equals(Status.VALIDEE))
+					.filter(demande -> demande.getDateDebut().getYear() == selection.getAnnee() || demande.getDateFin().getYear() == selection.getAnnee())
 					.map(demande -> service.transformerDemande(demande))
-					.collect(Collectors.toList()).forEach(demande -> missions.add(demande));
+					.collect(Collectors.toList());
+			rapport = service.creerRapportMission(missions, selection);
 		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(missions);
+		return ResponseEntity.status(HttpStatus.OK).body(rapport);
 	}
 
 }

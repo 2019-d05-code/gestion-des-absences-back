@@ -21,6 +21,7 @@ import dev.controller.vm.DemandeAbsenceDTO;
  */
 import dev.controller.vm.DemandeAbsenceValidationDTO;
 import dev.controller.vm.RapportAbsences;
+import dev.controller.vm.SelectionAbsence;
 import dev.domain.Collegue;
 import dev.domain.DemandeAbsence;
 import dev.domain.enums.Status;
@@ -169,7 +170,6 @@ public class ManagerService {
 			List<Integer> joursRTT = new ArrayList<>();
 			List<Integer> joursCP = new ArrayList<>();
 			List<Integer> joursCSS = new ArrayList<>();
-			List<Integer> joursMISSIONS = new ArrayList<>();
 
 			if (uneDemande.getType().equals(Type.RTT)) {
 				if (uneDemande.getDateFin().getMonthValue() == mois
@@ -253,7 +253,14 @@ public class ManagerService {
 		return new RapportAbsences(weekEnd, listeAbsences);
 	}
 	
-	public boolean recupListEmailDep(long id, DemandeAbsenceDTO demande) {
+	/**
+	 * Vérifie si un collègue existe dans la base de données et dans un département précis
+	 * 
+	 * @param id
+	 * @param demande
+	 * @return boolean
+	 */
+	public boolean verifColExist(long id, DemandeAbsenceDTO demande) {
 		
 		boolean exist = false;
 		
@@ -266,9 +273,79 @@ public class ManagerService {
 		return exist;
 	}
 	
+	/**
+	 * Transforme une demande d'absence DTO en DemandeAbsenceValidationDTO
+	 * 
+	 * @param demande
+	 * @return DemandeAbsenceValidationDTO
+	 */
 	public DemandeAbsenceValidationDTO transformerDemande(DemandeAbsenceDTO demande) {
 		Collegue collegue = colRepo.findByEmail(demande.getEmail()).orElseThrow(() -> new CollegueNonTrouveException("Aucun collègue ayant cet email n'a été trouvé"));
 		return new DemandeAbsenceValidationDTO(demande, collegue.getNom(), collegue.getPrenom());
+	}
+	
+	/**
+	 * Crée un rapport d'absences à partir de missions
+	 * 
+	 * @return RapportAbsences
+	 */
+	public RapportAbsences creerRapportMission(List<DemandeAbsenceValidationDTO> missions, SelectionAbsence selection) {
+		
+		LocalDate moisDateDebut = LocalDate.of(selection.getAnnee(), selection.getMois(), 1);
+		int nbJourMois = moisDateDebut.lengthOfMonth();
+		LocalDate moisDateFin = LocalDate.of(selection.getAnnee(), selection.getMois(), nbJourMois);
+
+		List<Absences> listeAbsences = new ArrayList<Absences>();
+		
+		List<Integer> joursMISSIONS = new ArrayList<>();
+		
+		missions.forEach(
+			mission -> {
+				if (mission.getDateFin().getMonthValue() == selection.getMois()
+						&& mission.getDateDebut().getMonthValue() == selection.getMois()) {
+					for (LocalDate date = mission.getDateDebut(); date
+							.isBefore(mission.getDateFin().plusDays(1)); date = date.plusDays(1)) {
+						joursMISSIONS.add(date.getDayOfMonth());
+
+					}
+				}
+				if (mission.getDateDebut().getMonthValue() == selection.getMois()) {
+					for (LocalDate date = mission.getDateDebut(); date
+							.isBefore(moisDateFin.plusDays(1)); date = date.plusDays(1)) {
+						joursMISSIONS.add(date.getDayOfMonth());
+					}
+				}
+				if (mission.getDateFin().getMonthValue() == selection.getMois()) {
+					for (LocalDate date = moisDateDebut; date
+							.isBefore(mission.getDateFin().plusDays(1)); date = date.plusDays(1)) {
+						joursMISSIONS.add(date.getDayOfMonth());
+					}
+				} 
+				if (mission.getDateDebut().isBefore(moisDateDebut) && mission.getDateFin().isAfter(moisDateFin)) {
+					for (LocalDate date = moisDateDebut; date
+							.isBefore(moisDateFin.plusDays(1)); date = date.plusDays(1)) {
+						joursMISSIONS.add(date.getDayOfMonth());
+					}
+				}
+				String prenomCollegue = mission.getPrenom();
+				String nomCollegue = mission.getNom();
+				listeAbsences.add(new Absences(nomCollegue, prenomCollegue, joursMISSIONS));
+			}
+		);
+		
+		List<Integer> weekEnd = new ArrayList<>();
+		for (LocalDate date = moisDateDebut; date.isBefore(moisDateFin); date = date.plusDays(1)) {
+			if (date.getDayOfWeek().equals(DayOfWeek.SATURDAY) || date.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+				weekEnd.add(date.getDayOfMonth());
+
+			}
+		}
+		
+		RapportAbsences rapport = new RapportAbsences();
+		rapport.setListeAbsences(listeAbsences);
+		rapport.setJoursWeekEnd(weekEnd);
+		
+		return rapport;
 	}
 
 }
