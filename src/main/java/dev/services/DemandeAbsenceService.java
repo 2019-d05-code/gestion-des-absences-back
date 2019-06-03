@@ -334,7 +334,7 @@ public class DemandeAbsenceService {
 				.filter(demande -> !demande.getStatus().equals(Status.VALIDEE))
 				.collect(Collectors.toList());
 		
-		if(demandes.get(0) != null && demandes.get(0).getType().equals(Type.RTT_EMPLOYEUR) && demandes.get(0).getStatus().equals(Status.VALIDEE)) {
+		if(!demandes.isEmpty() && demandes.get(0) != null && demandes.get(0).getType().equals(Type.RTT_EMPLOYEUR) && demandes.get(0).getStatus().equals(Status.VALIDEE)) {
 			throw new DemandeInvalideException("Il est interdit de modifier un RTT employeur validé");
 		}
 
@@ -367,7 +367,7 @@ public class DemandeAbsenceService {
 						&& demande.getDateDebut().equals(jourFerieASupprimer.getDate()))
 				.collect(Collectors.toList());
 		
-		if(demandes.get(0) != null && demandes.get(0).getType().equals(Type.RTT_EMPLOYEUR) && demandes.get(0).getStatus().equals(Status.VALIDEE)) {
+		if(!demandes.isEmpty() && demandes.get(0) != null && demandes.get(0).getType().equals(Type.RTT_EMPLOYEUR) && demandes.get(0).getStatus().equals(Status.VALIDEE)) {
 			throw new DemandeInvalideException("Il est interdit de supprimer un RTT employeur validé");
 		}
 
