@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
@@ -57,7 +56,7 @@ public class TraitementNuit {
 	DemandeAbsenceService serviceDemande;
 
 	//@Scheduled(cron="0 0 23 * * *")
-	@Scheduled(initialDelay=10000, fixedDelay=120000) //Ne pas supprimer
+	//@Scheduled(initialDelay=10000, fixedDelay=120000) //Ne pas supprimer
 	public void traitementNocturne() throws JSONException, MailjetException, MailjetSocketTimeoutException {
 		
 		client = new MailjetClient(pub, priv, new ClientOptions("v3.1"));
