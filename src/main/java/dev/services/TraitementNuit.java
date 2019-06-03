@@ -6,14 +6,11 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
@@ -21,7 +18,6 @@ import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
-import com.mailjet.client.resource.Emailv31;
 
 import dev.domain.DemandeAbsence;
 import dev.domain.enums.Status;
@@ -57,7 +53,7 @@ public class TraitementNuit {
 	DemandeAbsenceService serviceDemande;
 
 	//@Scheduled(cron="0 0 23 * * *")
-	@Scheduled(initialDelay=10000, fixedDelay=120000) //Ne pas supprimer
+	//@Scheduled(initialDelay=10000, fixedDelay=120000) //Ne pas supprimer
 	public void traitementNocturne() throws JSONException, MailjetException, MailjetSocketTimeoutException {
 		
 		client = new MailjetClient(pub, priv, new ClientOptions("v3.1"));
@@ -158,24 +154,24 @@ public class TraitementNuit {
 
 		}
 
-		if(this.notification != null){
-			request = new MailjetRequest(Emailv31.resource)
-					.property(Emailv31.MESSAGES, new JSONArray()
-							.put(new JSONObject()
-									.put(Emailv31.Message.FROM, new JSONObject()
-											.put("Email", this.email)
-											.put("Name", "Traitement de Nuit"))
-									.put(Emailv31.Message.TO, new JSONArray()
-											.put(new JSONObject()
-													.put("Email", this.email)
-													.put("Name", "Manager")))
-									.put(Emailv31.Message.SUBJECT, "Notification demandes en attente")
-									.put(Emailv31.Message.TEXTPART, "")
-									.put(Emailv31.Message.HTMLPART, this.notification)));
-			response = client.post(request);
-			System.out.println(response.getStatus());
-			System.out.println(response.getData());				
-		}
+//		if(this.notification != null){
+//			request = new MailjetRequest(Emailv31.resource)
+//					.property(Emailv31.MESSAGES, new JSONArray()
+//							.put(new JSONObject()
+//									.put(Emailv31.Message.FROM, new JSONObject()
+//											.put("Email", this.email)
+//											.put("Name", "Traitement de Nuit"))
+//									.put(Emailv31.Message.TO, new JSONArray()
+//											.put(new JSONObject()
+//													.put("Email", this.email)
+//													.put("Name", "Manager")))
+//									.put(Emailv31.Message.SUBJECT, "Notification demandes en attente")
+//									.put(Emailv31.Message.TEXTPART, "")
+//									.put(Emailv31.Message.HTMLPART, this.notification)));
+//			response = client.post(request);
+//			System.out.println(response.getStatus());
+//			System.out.println(response.getData());				
+//		}
 		
 	}
 	
