@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import dev.domain.Collegue;
 import dev.domain.DemandeAbsence;
 import dev.domain.Departement;
+import dev.domain.JourFerie;
 import dev.domain.RoleCollegue;
 import dev.domain.Version;
 import dev.domain.enums.Role;
@@ -23,6 +24,7 @@ import dev.domain.enums.Type;
 import dev.repository.CollegueRepo;
 import dev.repository.DemandeAbsenceRepo;
 import dev.repository.DepartementRepo;
+import dev.repository.JourFerieRepository;
 import dev.repository.VersionRepo;
 
 /**
@@ -38,14 +40,16 @@ public class StartupListener {
     private CollegueRepo collegueRepo;
     private DemandeAbsenceRepo demandeRepo;
     private DepartementRepo depRepo;
+    private JourFerieRepository jfRepo;
 
-    public StartupListener(@Value("${app.version}") String appVersion, VersionRepo versionRepo, PasswordEncoder passwordEncoder, CollegueRepo collegueRepo, DemandeAbsenceRepo demandeRepo, DepartementRepo depRepo) {
+    public StartupListener(@Value("${app.version}") String appVersion, VersionRepo versionRepo, PasswordEncoder passwordEncoder, CollegueRepo collegueRepo, DemandeAbsenceRepo demandeRepo, DepartementRepo depRepo, JourFerieRepository jfRepo) {
         this.appVersion = appVersion;
         this.versionRepo = versionRepo;
         this.passwordEncoder = passwordEncoder;
         this.collegueRepo = collegueRepo;
         this.demandeRepo = demandeRepo;
         this.depRepo = depRepo;
+        this.jfRepo = jfRepo;
     }
 
     @EventListener(ContextRefreshedEvent.class)
@@ -188,6 +192,25 @@ public class StartupListener {
         demandeEnAttente3.setStatus(Status.INITIALE);
         demandeEnAttente3.setCollegueConcerne(col3);
         this.demandeRepo.save(demandeEnAttente3);
+        
+        // Absences collectives
+        
+        JourFerie jf = new JourFerie();
+        jf.setDate(LocalDate.of(2019, 12, 25));
+        jf.setCommentaire("Noël");
+        jf.setType(Type.FERIE);
+        this.jfRepo.save(jf);
+        
+        JourFerie jf2 = new JourFerie();
+        jf2.setDate(LocalDate.of(2019, 6, 14));
+        jf2.setCommentaire("Weekend intégration");
+        jf2.setType(Type.RTT_EMPLOYEUR);
+        this.jfRepo.save(jf2);
+        
+        JourFerie jf3 = new JourFerie();
+        jf3.setDate(LocalDate.of(2019, 5, 31));
+        jf3.setType(Type.RTT_EMPLOYEUR);
+        this.jfRepo.save(jf3);
         
     }
 

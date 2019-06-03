@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 
 import dev.controller.vm.JourFerieDTO;
 import dev.domain.enums.Type;
@@ -33,7 +32,6 @@ public class JourFerie {
 	@Enumerated(EnumType.STRING)
 	private Type type;
 	
-	@NotEmpty
 	private String commentaire;
 
 	public JourFerie() {

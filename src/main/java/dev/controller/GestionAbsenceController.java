@@ -105,9 +105,9 @@ public class GestionAbsenceController {
 	 */
 	@GetMapping("/absence-collective")
 	@Secured("ROLE_ADMINISTRATEUR")
-	public ResponseEntity<List<JourFerieDTO>> recupAbsencesCollectives(@RequestBody JourFerieDTO jf) {
+	public ResponseEntity<List<JourFerieDTO>> recupAbsencesCollectives(@RequestParam int annee) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(service.recupAbsenceCollective());
+		return ResponseEntity.status(HttpStatus.OK).body(service.recupAbsenceCollective(annee));
 
 	}
 
