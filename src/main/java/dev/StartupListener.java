@@ -193,6 +193,16 @@ public class StartupListener {
         demandeEnAttente3.setCollegueConcerne(col3);
         this.demandeRepo.save(demandeEnAttente3);
         
+        DemandeAbsence demandeEnAttente4 = new DemandeAbsence();
+        demandeEnAttente4.setDateDebut(LocalDate.of(2019, 8, 8));
+        demandeEnAttente4.setDateFin(LocalDate.of(2019,  8, 12));
+        demandeEnAttente4.setHeureCreation(LocalDateTime.now());
+        demandeEnAttente4.setType(Type.CONGES_SANS_SOLDE);
+        demandeEnAttente4.setMotif("Raisons familiales");
+        demandeEnAttente4.setStatus(Status.EN_ATTENTE_VALIDATION);
+        demandeEnAttente4.setCollegueConcerne(col1);
+        this.demandeRepo.save(demandeEnAttente4);
+        
         // Absences collectives
         
         JourFerie jf = new JourFerie();
