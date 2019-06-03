@@ -56,8 +56,8 @@ public class TraitementNuit {
 	@Autowired
 	DemandeAbsenceService serviceDemande;
 
-	@Scheduled(cron="0 0 23 * * *")
-	//@Scheduled(initialDelay=10000, fixedDelay=50000) //Ne pas supprimer
+	//@Scheduled(cron="0 0 23 * * *")
+	@Scheduled(initialDelay=10000, fixedDelay=120000) //Ne pas supprimer
 	public void traitementNocturne() throws JSONException, MailjetException, MailjetSocketTimeoutException {
 		
 		client = new MailjetClient(pub, priv, new ClientOptions("v3.1"));
